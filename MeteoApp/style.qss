@@ -1,0 +1,74 @@
+/* Thème clair moderne - appliqué dans main.cpp */
+* { font-family: "Segoe UI", "Noto Sans", "Helvetica Neue", sans-serif; font-size: 10pt; }
+
+QMainWindow, QDialog { background: #f4f6fa; }
+
+QLabel#titleLabel {
+    background: qlineargradient(x1:0, y1:0, x2:1, y2:0, stop:0 #1f4e8c, stop:1 #3a86c8);
+    color: white; font-size: 15pt; font-weight: 600;
+    padding: 14px 18px; border-radius: 8px;
+}
+
+/* Champs de saisie */
+QLineEdit, QDateEdit, QDateTimeEdit, QComboBox, QSpinBox, QDoubleSpinBox {
+    background: white; border: 1px solid #c5ccd8; border-radius: 6px;
+    padding: 5px 8px; min-height: 22px;
+}
+QLineEdit:focus, QDateEdit:focus, QDateTimeEdit:focus, QComboBox:focus,
+QSpinBox:focus, QDoubleSpinBox:focus { border: 1px solid #2f6fb3; }
+QComboBox::drop-down, QDateEdit::drop-down, QDateTimeEdit::drop-down { border: none; width: 22px; }
+
+/* Boutons */
+QPushButton {
+    background: white; color: #1f2d3d; border: 1px solid #c5ccd8;
+    border-radius: 6px; padding: 7px 14px;
+}
+QPushButton:hover   { background: #eaf1fb; border-color: #2f6fb3; }
+QPushButton:pressed { background: #d6e5f7; }
+
+QPushButton#searchButton, QPushButton#addButton, QPushButton[primary="true"] {
+    background: #2f6fb3; color: white; border: none; font-weight: 600;
+}
+QPushButton#searchButton:hover, QPushButton#addButton:hover,
+QPushButton[primary="true"]:hover { background: #265b94; }
+
+QPushButton#editButton   { color: #2f6fb3; font-weight: 600; }
+QPushButton#deleteButton { background: #d64545; color: white; border: none; font-weight: 600; }
+QPushButton#deleteButton:hover { background: #b83636; }
+QPushButton#attestButton { background: #2e9b6f; color: white; border: none; font-weight: 600; }
+QPushButton#attestButton:hover { background: #247c59; }
+QPushButton#anomalyButton { background: #e08a1e; color: white; border: none; font-weight: 600; }
+QPushButton#anomalyButton:hover { background: #b96f14; }
+
+/* Tableaux */
+QTableView {
+    background: white; alternate-background-color: #f1f5fb;
+    border: 1px solid #d6dce6; border-radius: 6px; gridline-color: transparent;
+    selection-background-color: #cfe2f8; selection-color: #10294a;
+}
+QHeaderView::section {
+    background: #1f4e8c; color: white; padding: 8px; border: none; font-weight: 600;
+}
+QTableView QTableCornerButton::section { background: #1f4e8c; border: none; }
+
+/* Divers */
+QCheckBox { spacing: 6px; }
+QDialogButtonBox QPushButton { min-width: 80px; }
+QScrollBar:vertical   { background: transparent; width: 10px; }
+QScrollBar::handle:vertical   { background: #b8c2d3; border-radius: 5px; min-height: 30px; }
+QScrollBar:horizontal { background: transparent; height: 10px; }
+QScrollBar::handle:horizontal { background: #b8c2d3; border-radius: 5px; min-width: 30px; }
+QScrollBar::add-line, QScrollBar::sub-line { width: 0; height: 0; }
+QPlainTextEdit { background: white; border: 1px solid #d6dce6; border-radius: 6px; padding: 6px; }
+
+/* Flèches des listes déroulantes, dates et compteurs */
+QComboBox::down-arrow, QDateEdit::down-arrow, QDateTimeEdit::down-arrow,
+QAbstractSpinBox::down-arrow { image: url(:/arrow_down.png); width: 12px; height: 8px; }
+QAbstractSpinBox::up-arrow   { image: url(:/arrow_up.png);   width: 12px; height: 8px; }
+QAbstractSpinBox::up-button, QAbstractSpinBox::down-button {
+    subcontrol-origin: border; width: 20px; background: #eef2f8;
+    border-left: 1px solid #c5ccd8;
+}
+QAbstractSpinBox::up-button   { subcontrol-position: top right;    border-top-right-radius: 6px; }
+QAbstractSpinBox::down-button { subcontrol-position: bottom right; border-bottom-right-radius: 6px; }
+QDateEdit, QDateTimeEdit { min-width: 120px; }
