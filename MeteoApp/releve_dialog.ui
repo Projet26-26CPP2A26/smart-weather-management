@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>ReleveDialog</class>
+ <widget class="QDialog" name="ReleveDialog">
+  <property name="windowTitle"><string>Relevé météo</string></property>
+  <property name="minimumSize"><size><width>400</width><height>0</height></size></property>
+  <property name="styleSheet">
+   <string notr="true">/* Thème clair moderne - appliqué dans main.cpp */
+* { font-family: "Segoe UI", "Noto Sans", "Helvetica Neue", sans-serif; font-size: 10pt; }
+
+QMainWindow, QDialog { background: #f4f6fa; }
+
+QLabel#titleLabel {
+    background: qlineargradient(x1:0, y1:0, x2:1, y2:0, stop:0 #1f4e8c, stop:1 #3a86c8);
+    color: white; font-size: 15pt; font-weight: 600;
+    padding: 14px 18px; border-radius: 8px;
+}
+
+/* Champs de saisie */
+QLineEdit, QDateEdit, QDateTimeEdit, QComboBox, QSpinBox, QDoubleSpinBox {
+    background: white; border: 1px solid #c5ccd8; border-radius: 6px;
+    padding: 5px 8px; min-height: 22px;
+}
+QLineEdit:focus, QDateEdit:focus, QDateTimeEdit:focus, QComboBox:focus,
+QSpinBox:focus, QDoubleSpinBox:focus { border: 1px solid #2f6fb3; }
+QComboBox::drop-down, QDateEdit::drop-down, QDateTimeEdit::drop-down { border: none; width: 22px; }
+
+/* Boutons */
+QPushButton {
+    background: white; color: #1f2d3d; border: 1px solid #c5ccd8;
+    border-radius: 6px; padding: 7px 14px;
+}
+QPushButton:hover   { background: #eaf1fb; border-color: #2f6fb3; }
+QPushButton:pressed { background: #d6e5f7; }
+
+QPushButton#searchButton, QPushButton#addButton, QPushButton[primary="true"] {
+    background: #2f6fb3; color: white; border: none; font-weight: 600;
+}
+QPushButton#searchButton:hover, QPushButton#addButton:hover,
+QPushButton[primary="true"]:hover { background: #265b94; }
+
+QPushButton#editButton   { color: #2f6fb3; font-weight: 600; }
+QPushButton#deleteButton { background: #d64545; color: white; border: none; font-weight: 600; }
+QPushButton#deleteButton:hover { background: #b83636; }
+QPushButton#attestButton { background: #2e9b6f; color: white; border: none; font-weight: 600; }
+QPushButton#attestButton:hover { background: #247c59; }
+QPushButton#anomalyButton { background: #e08a1e; color: white; border: none; font-weight: 600; }
+QPushButton#anomalyButton:hover { background: #b96f14; }
+
+/* Tableaux */
+QTableView {
+    background: white; alternate-background-color: #f1f5fb;
+    border: 1px solid #d6dce6; border-radius: 6px; gridline-color: transparent;
+    selection-background-color: #cfe2f8; selection-color: #10294a;
+}
+QHeaderView::section {
+    background: #1f4e8c; color: white; padding: 8px; border: none; font-weight: 600;
+}
+QTableView QTableCornerButton::section { background: #1f4e8c; border: none; }
+
+/* Divers */
+QCheckBox { spacing: 6px; }
+QDialogButtonBox QPushButton { min-width: 80px; }
+QScrollBar:vertical   { background: transparent; width: 10px; }
+QScrollBar::handle:vertical   { background: #b8c2d3; border-radius: 5px; min-height: 30px; }
+QScrollBar:horizontal { background: transparent; height: 10px; }
+QScrollBar::handle:horizontal { background: #b8c2d3; border-radius: 5px; min-width: 30px; }
+QScrollBar::add-line, QScrollBar::sub-line { width: 0; height: 0; }
+QPlainTextEdit { background: white; border: 1px solid #d6dce6; border-radius: 6px; padding: 6px; }
+
+/* Flèches des listes déroulantes, dates et compteurs */
+QComboBox::down-arrow, QDateEdit::down-arrow, QDateTimeEdit::down-arrow,
+QAbstractSpinBox::down-arrow { image: url(:/arrow_down.png); width: 12px; height: 8px; }
+QAbstractSpinBox::up-arrow   { image: url(:/arrow_up.png);   width: 12px; height: 8px; }
+QAbstractSpinBox::up-button, QAbstractSpinBox::down-button {
+    subcontrol-origin: border; width: 20px; background: #eef2f8;
+    border-left: 1px solid #c5ccd8;
+}
+QAbstractSpinBox::up-button   { subcontrol-position: top right;    border-top-right-radius: 6px; }
+QAbstractSpinBox::down-button { subcontrol-position: bottom right; border-bottom-right-radius: 6px; }
+QDateEdit, QDateTimeEdit { min-width: 120px; }
+</string>
+  </property>
+  <layout class="QVBoxLayout" name="dialogLayout">
+   <item>
+    <widget class="QLabel" name="titleLabel">
+     <property name="text"><string>Relevé météo</string></property>
+    </widget>
+   </item>
+   <item>
+    <layout class="QFormLayout" name="formLayout">
+     <item row="0" column="0"><widget class="QLabel" name="l1"><property name="text"><string>ID station</string></property></widget></item>
+     <item row="0" column="1"><widget class="QSpinBox" name="station"><property name="minimum"><number>1</number></property><property name="maximum"><number>999999</number></property></widget></item>
+     <item row="1" column="0"><widget class="QLabel" name="l2"><property name="text"><string>Horodatage</string></property></widget></item>
+     <item row="1" column="1"><widget class="QDateTimeEdit" name="horo"><property name="displayFormat"><string>dd/MM/yyyy HH:mm</string></property><property name="calendarPopup"><bool>true</bool></property></widget></item>
+     <item row="2" column="0"><widget class="QLabel" name="l3"><property name="text"><string>Température</string></property></widget></item>
+     <item row="2" column="1"><widget class="QDoubleSpinBox" name="temp"><property name="suffix"><string> °C</string></property><property name="minimum"><double>-60</double></property><property name="maximum"><double>60</double></property></widget></item>
+     <item row="3" column="0"><widget class="QLabel" name="l4"><property name="text"><string>Humidité</string></property></widget></item>
+     <item row="3" column="1"><widget class="QDoubleSpinBox" name="hum"><property name="suffix"><string> %</string></property><property name="maximum"><double>100</double></property></widget></item>
+     <item row="4" column="0"><widget class="QLabel" name="l5"><property name="text"><string>Pression</string></property></widget></item>
+     <item row="4" column="1"><widget class="QDoubleSpinBox" name="pres"><property name="suffix"><string> hPa</string></property><property name="minimum"><double>800</double></property><property name="maximum"><double>1100</double></property><property name="value"><double>1013</double></property></widget></item>
+     <item row="5" column="0"><widget class="QLabel" name="l6"><property name="text"><string>Vitesse du vent</string></property></widget></item>
+     <item row="5" column="1"><widget class="QDoubleSpinBox" name="vent"><property name="suffix"><string> km/h</string></property><property name="maximum"><double>400</double></property></widget></item>
+     <item row="6" column="0"><widget class="QLabel" name="l7"><property name="text"><string>Précipitation</string></property></widget></item>
+     <item row="6" column="1"><widget class="QDoubleSpinBox" name="precip"><property name="suffix"><string> mm</string></property><property name="maximum"><double>1000</double></property></widget></item>
+     <item row="7" column="0"><widget class="QLabel" name="l8"><property name="text"><string>Mode de collecte</string></property></widget></item>
+     <item row="7" column="1"><widget class="QComboBox" name="mode"><item><property name="text"><string>Automatique</string></property></item><item><property name="text"><string>Manuel</string></property></item></widget></item>
+    </layout>
+   </item>
+   <item>
+    <widget class="QDialogButtonBox" name="buttonBox">
+     <property name="standardButtons"><set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set></property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections>
+  <connection><sender>buttonBox</sender><signal>accepted()</signal><receiver>ReleveDialog</receiver><slot>accept()</slot></connection>
+  <connection><sender>buttonBox</sender><signal>rejected()</signal><receiver>ReleveDialog</receiver><slot>reject()</slot></connection>
+ </connections>
+</ui>

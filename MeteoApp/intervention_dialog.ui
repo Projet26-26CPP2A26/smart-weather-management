@@ -1,0 +1,292 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>InterventionDialog</class>
+ <widget class="QDialog" name="InterventionDialog">
+  <property name="geometry"><rect><x>0</x><y>0</y><width>620</width><height>640</height></rect></property>
+  <property name="windowTitle"><string>Intervention</string></property>
+  <property name="styleSheet">
+   <string notr="true"><![CDATA[/* ===========================================================
+   SMART WEATHER – Module 5 : Maintenance & Interventions
+   Theme clair, cartes degradees, boutons en relief (3D)
+   =========================================================== */
+* { font-family: "Segoe UI", "Roboto", sans-serif; font-size: 13px; color: #1f2d3d; }
+QMainWindow, QDialog, QWidget#central, QWidget#content { background: #eef2f9; }
+QStackedWidget, QWidget#pageList, QWidget#pageStats { background: transparent; }
+
+/* ---------- Sidebar ---------- */
+QFrame#sidebar {
+    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #ffffff, stop:1 #e9f0fb);
+    border-right: 1px solid #d5e1f3;
+}
+QLabel#lblBrand  { font-size: 19px; font-weight: 800; color: #1565c0; background: transparent; }
+QLabel#lblModule { color: #6b7c93; font-size: 11px; background: transparent; padding-bottom: 8px; }
+QLabel#lblUserRole {
+    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #ffffff, stop:1 #e3ecfa);
+    border: 1px solid #c9d8ef; border-bottom: 3px solid #b3c8e8; border-radius: 10px;
+    padding: 10px; color: #0d47a1; font-weight: 700; margin-bottom: 10px;
+}
+QLabel#lblClock { color: #1565c0; font-weight: 700; background: white; border: 1px solid #d5e1f3;
+                  border-radius: 8px; padding: 6px; }
+
+QPushButton[nav="true"] {
+    text-align: left; padding: 11px 14px; border-radius: 10px; border: 1px solid transparent;
+    background: transparent; color: #33475b; font-weight: 600;
+}
+QPushButton[nav="true"]:hover { background: #dfeafb; }
+QPushButton[nav="true"]:checked {
+    color: white; font-weight: 700; border: 1px solid #0d47a1; border-bottom: 3px solid #0b3a82;
+    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #42a5f5, stop:1 #1565c0);
+}
+
+/* ---------- Banniere de role ---------- */
+QLabel#lblRole {
+    background: white; color: #1b8a5a; font-weight: 700; padding: 10px 16px;
+    border: 2px solid #2bb673; border-radius: 10px;
+}
+
+/* ---------- Cartes KPI (degrade + relief) ---------- */
+QFrame[cardColor] { border-radius: 14px; border: none; }
+QFrame[cardColor="blue"]   { background: qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 #2196f3, stop:1 #0d47a1);
+                             border-bottom: 5px solid #0a3577; }
+QFrame[cardColor="green"]  { background: qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 #11c98f, stop:1 #00796b);
+                             border-bottom: 5px solid #00564c; }
+QFrame[cardColor="red"]    { background: qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 #ff5252, stop:1 #c62828);
+                             border-bottom: 5px solid #8e1b1b; }
+QFrame[cardColor="purple"] { background: qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 #9575ff, stop:1 #5e35b1);
+                             border-bottom: 5px solid #432780; }
+QLabel[kpiValue="true"] { font-size: 30px; font-weight: 800; color: white; background: transparent; border: none; }
+QLabel[kpiLabel="true"] { font-size: 12px; color: rgba(255,255,255,0.92); background: transparent; border: none; }
+
+/* ---------- Panneaux ---------- */
+QFrame[panel="true"] { background: white; border: 1px solid #e0e8f4; border-bottom: 3px solid #d0dbec; border-radius: 14px; }
+QFrame[panel="true"] QLabel, QFrame[panel="true"] QCheckBox { background: transparent; border: none; }
+QFrame[panel="true"] QLabel[panelTitle="true"] { font-size: 14px; font-weight: 800; color: #1565c0;
+                            border-bottom: 2px solid #1976d2; padding-bottom: 4px; }
+
+/* ---------- Boutons en relief ---------- */
+QPushButton {
+    color: #1f2d3d; font-weight: 600; padding: 8px 14px 6px 14px; border-radius: 9px;
+    border: 1px solid #c3cfe2; border-bottom: 3px solid #a9b9d3;
+    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #ffffff, stop:1 #e6edf8);
+}
+QPushButton:hover   { background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #ffffff, stop:1 #d6e6fd); }
+QPushButton:pressed { border-bottom: 1px solid #a9b9d3; padding: 10px 14px 4px 14px; }
+QPushButton:disabled { color: #9aa7b8; background: #eef1f6; border: 1px solid #dde3ee; border-bottom: 3px solid #cfd7e4; }
+
+QPushButton[role="primary"], QPushButton[role="edit"], QPushButton[role="success"], QPushButton[role="danger"],
+QPushButton[role="warning"], QPushButton[role="purple"], QPushButton[role="accent"], QPushButton[role="navy"] {
+    color: white; font-weight: 700;
+}
+QPushButton[role="primary"]  { border: 1px solid #0d47a1; border-bottom: 3px solid #0a3577;
+    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #42a5f5, stop:1 #1565c0); }
+QPushButton[role="edit"]     { border: 1px solid #3b6fb6; border-bottom: 3px solid #2c548c;
+    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #6f9bd6, stop:1 #3b6fb6); }
+QPushButton[role="success"]  { border: 1px solid #1b8a5a; border-bottom: 3px solid #12633f;
+    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #3ddc97, stop:1 #1b9e66); }
+QPushButton[role="danger"]   { border: 1px solid #c62828; border-bottom: 3px solid #8e1b1b;
+    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #ff6b6b, stop:1 #d32f2f); }
+QPushButton[role="warning"]  { border: 1px solid #e67e00; border-bottom: 3px solid #b05f00;
+    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #ffb74d, stop:1 #f57c00); }
+QPushButton[role="purple"]   { border: 1px solid #6a3fd1; border-bottom: 3px solid #4b2b99;
+    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #9d7bff, stop:1 #6a3fd1); }
+QPushButton[role="accent"]   { border: 1px solid #00796b; border-bottom: 3px solid #00564c;
+    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #26c6b0, stop:1 #00897b); }
+QPushButton[role="navy"]     { border: 1px solid #1a2f55; border-bottom: 3px solid #101e38;
+    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #3d5a96, stop:1 #1f3a6e); }
+QPushButton[role]:hover      { padding-bottom: 6px; }
+QPushButton[role]:pressed    { border-bottom: 1px solid #000000; padding: 10px 14px 4px 14px; }
+QPushButton[role]:disabled   { color: #9aa7b8; background: #eef1f6; border: 1px solid #dde3ee; border-bottom: 3px solid #cfd7e4; }
+QPushButton[nav="true"]:pressed { padding: 11px 14px; border-bottom: 1px solid #0b3a82; }
+
+/* ---------- Champs ---------- */
+QLineEdit, QComboBox, QDateEdit, QDoubleSpinBox, QTextEdit {
+    background: white; border: 1px solid #cfd8e6; border-bottom: 2px solid #b9c7dc; border-radius: 8px; padding: 6px 8px;
+}
+QLineEdit:focus, QComboBox:focus, QDateEdit:focus, QDoubleSpinBox:focus, QTextEdit:focus {
+    border: 1px solid #1976d2; border-bottom: 2px solid #1976d2;
+}
+QCheckBox { spacing: 6px; color: #33475b; }
+
+/* Fleches (arrow_down.png / arrow_up.png) */
+QComboBox::drop-down, QDateEdit::drop-down {
+    subcontrol-origin: padding; subcontrol-position: center right; width: 24px; border: none;
+}
+QComboBox::down-arrow, QDateEdit::down-arrow { image: url(:/maintenance_arrow_down.png); width: 12px; height: 8px; }
+QComboBox QAbstractItemView {
+    background: white; border: 1px solid #cfd8e6;
+    selection-background-color: #bbdefb; selection-color: #0d1b2a;
+}
+QDoubleSpinBox::up-button   { subcontrol-origin: border; subcontrol-position: top right;    width: 22px; border: none; }
+QDoubleSpinBox::down-button { subcontrol-origin: border; subcontrol-position: bottom right; width: 22px; border: none; }
+QDoubleSpinBox::up-arrow    { image: url(:/maintenance_arrow_up.png);   width: 10px; height: 7px; }
+QDoubleSpinBox::down-arrow  { image: url(:/maintenance_arrow_down.png); width: 10px; height: 7px; }
+
+/* ---------- Tableau ---------- */
+QTableView {
+    background: white; alternate-background-color: #f4f8fe;
+    border: 1px solid #dbe5f3; border-radius: 10px; gridline-color: transparent;
+    selection-background-color: #bbdefb; selection-color: #0d1b2a;
+}
+QHeaderView::section {
+    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #2f7fd6, stop:1 #1250a8);
+    color: white; font-weight: 700; padding: 9px 8px; border: none; border-right: 1px solid #0d3f87;
+}
+QTableCornerButton::section { background: #1250a8; border: none; }
+
+/* ---------- Scrollbars ---------- */
+QScrollBar:vertical { background: #eef2f9; width: 12px; margin: 0; border-radius: 6px; }
+QScrollBar::handle:vertical { background: #b9cbe8; border-radius: 6px; min-height: 30px; }
+QScrollBar::handle:vertical:hover { background: #90b4f0; }
+QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical { height: 0; }
+QScrollBar:horizontal { background: #eef2f9; height: 12px; margin: 0; border-radius: 6px; }
+QScrollBar::handle:horizontal { background: #b9cbe8; border-radius: 6px; min-width: 30px; }
+QScrollBar::add-line:horizontal, QScrollBar::sub-line:horizontal { width: 0; }
+
+QToolTip { background: #1f3a6e; color: white; border: none; padding: 5px 8px; border-radius: 6px; }
+QStatusBar { background: white; color: #6b7c93; border-top: 1px solid #d5e1f3; }
+
+/* ---------- Dialogue Intervention ---------- */
+QLabel#dlgTitle {
+    color: white; font-size: 19px; font-weight: 800; padding: 16px 22px; border-radius: 14px;
+    border-bottom: 5px solid #0a3577;
+    background: qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 #2196f3, stop:1 #0d47a1);
+}
+QLabel#dlgSub { color: #6b7c93; font-size: 12px; background: transparent; padding: 0 4px 2px 4px; }
+QLabel[caption="true"] { font-size: 11px; font-weight: 700; color: #4a6384; background: transparent; border: none;
+                         padding-top: 4px; }
+QFrame#formCard { background: white; border: 1px solid #e0e8f4; border-bottom: 3px solid #d0dbec; border-radius: 14px; }
+QFrame#formCard QLabel { background: transparent; border: none; }
+QDialogButtonBox QPushButton { min-width: 120px; }
+]]></string>
+  </property>
+  <layout class="QVBoxLayout" name="mainLayout">
+   <property name="spacing"><number>12</number></property>
+   <property name="leftMargin"><number>22</number></property>
+   <property name="topMargin"><number>20</number></property>
+   <property name="rightMargin"><number>22</number></property>
+   <property name="bottomMargin"><number>18</number></property>
+   <item>
+    <widget class="QLabel" name="dlgTitle">
+     <property name="text"><string>🛠  Intervention de maintenance</string></property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QLabel" name="dlgSub">
+     <property name="text"><string>Les champs marqués d'une * sont obligatoires.</string></property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QFrame" name="formCard">
+     <layout class="QGridLayout" name="formGrid">
+      <property name="horizontalSpacing"><number>18</number></property>
+      <property name="verticalSpacing"><number>4</number></property>
+      <property name="leftMargin"><number>20</number></property>
+      <property name="topMargin"><number>16</number></property>
+      <property name="rightMargin"><number>20</number></property>
+      <property name="bottomMargin"><number>18</number></property>
+      <item row="0" column="0">
+       <widget class="QLabel" name="lblStation">
+        <property name="caption" stdset="0"><bool>true</bool></property>
+        <property name="text"><string>🏢  Station *</string></property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QComboBox" name="cbStation"/>
+      </item>
+      <item row="0" column="1">
+       <widget class="QLabel" name="lblEmploye">
+        <property name="caption" stdset="0"><bool>true</bool></property>
+        <property name="text"><string>👷  Technicien *</string></property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QComboBox" name="cbEmploye"/>
+      </item>
+      <item row="2" column="0">
+       <widget class="QLabel" name="lblType">
+        <property name="caption" stdset="0"><bool>true</bool></property>
+        <property name="text"><string>🔧  Type *</string></property>
+       </widget>
+      </item>
+      <item row="3" column="0">
+       <widget class="QComboBox" name="cbType">
+        <item><property name="text"><string>Préventive</string></property></item>
+        <item><property name="text"><string>Corrective</string></property></item>
+        <item><property name="text"><string>Calibration</string></property></item>
+        <item><property name="text"><string>Remplacement capteur</string></property></item>
+       </widget>
+      </item>
+      <item row="2" column="1">
+       <widget class="QLabel" name="lblPriorite">
+        <property name="caption" stdset="0"><bool>true</bool></property>
+        <property name="text"><string>⚡  Priorité *</string></property>
+       </widget>
+      </item>
+      <item row="3" column="1">
+       <widget class="QComboBox" name="cbPriorite">
+        <item><property name="text"><string>Basse</string></property></item>
+        <item><property name="text"><string>Moyenne</string></property></item>
+        <item><property name="text"><string>Haute</string></property></item>
+        <item><property name="text"><string>Urgente</string></property></item>
+       </widget>
+      </item>
+      <item row="4" column="0">
+       <widget class="QLabel" name="lblPlan">
+        <property name="caption" stdset="0"><bool>true</bool></property>
+        <property name="text"><string>📅  Date planifiée</string></property>
+       </widget>
+      </item>
+      <item row="5" column="0">
+       <widget class="QDateEdit" name="dePlan">
+        <property name="calendarPopup"><bool>true</bool></property>
+        <property name="displayFormat"><string>dd/MM/yyyy</string></property>
+       </widget>
+      </item>
+      <item row="4" column="1">
+       <widget class="QLabel" name="lblStatut">
+        <property name="caption" stdset="0"><bool>true</bool></property>
+        <property name="text"><string>📌  Statut</string></property>
+       </widget>
+      </item>
+      <item row="5" column="1">
+       <widget class="QComboBox" name="cbStatut">
+        <item><property name="text"><string>Planifiée</string></property></item>
+        <item><property name="text"><string>En cours</string></property></item>
+        <item><property name="text"><string>Terminée</string></property></item>
+        <item><property name="text"><string>Annulée</string></property></item>
+       </widget>
+      </item>
+      <item row="6" column="0">
+       <widget class="QLabel" name="lblCout">
+        <property name="caption" stdset="0"><bool>true</bool></property>
+        <property name="text"><string>💰  Coût</string></property>
+       </widget>
+      </item>
+      <item row="7" column="0">
+       <widget class="QDoubleSpinBox" name="spCout"/>
+      </item>
+      <item row="8" column="0" colspan="2">
+       <widget class="QLabel" name="lblRapport">
+        <property name="caption" stdset="0"><bool>true</bool></property>
+        <property name="text"><string>📝  Rapport d'intervention</string></property>
+       </widget>
+      </item>
+      <item row="9" column="0" colspan="2">
+       <widget class="QTextEdit" name="teRapport">
+        <property name="minimumSize"><size><width>0</width><height>110</height></size></property>
+        <property name="placeholderText"><string>Décrivez l'intervention réalisée, les pièces changées, les observations...</string></property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QDialogButtonBox" name="buttonBox">
+     <property name="standardButtons"><set>QDialogButtonBox::Cancel|QDialogButtonBox::Save</set></property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
