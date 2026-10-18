@@ -1,5 +1,5 @@
 #include "smartweather.h"
-
+#include "gestionstation.h"
 #include <QComboBox>
 #include <QCryptographicHash>
 #include <QDate>
@@ -245,7 +245,12 @@ QWidget *smartweather::buildAccueilPage()
 
     connect(btnDeco, &QPushButton::clicked, this, &smartweather::deconnecter);
     connect(m_btnEmployes, &QPushButton::clicked, this, &smartweather::ouvrirEmployes);
-    connect(btnStations, &QPushButton::clicked, this, &smartweather::moduleIndisponible);
+    connect(btnStations, &QPushButton::clicked, this, []() {
+        auto *g = new GestionStation();
+        g->setAttribute(Qt::WA_DeleteOnClose);
+        g->resize(1150, 650);
+        g->show();
+    });
     connect(btnReleves, &QPushButton::clicked, this, &smartweather::moduleIndisponible);
     connect(btnAlertes, &QPushButton::clicked, this, &smartweather::moduleIndisponible);
     return page;

@@ -7,13 +7,18 @@ CONFIG += c++17
 
 SOURCES += \
     main.cpp \
-    smartweather.cpp
+    smartweather.cpp \
+    station.cpp \
+    gestionstation.cpp
 
 HEADERS += \
-    smartweather.h
+    smartweather.h \
+    station.h \
+    gestionstation.h
 
 FORMS += \
-    smartweather.ui
+    smartweather.ui \
+    gestionstation.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
