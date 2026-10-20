@@ -1,4 +1,4 @@
-QT += core gui widgets sql
+QT += core gui widgets sql charts printsupport
 CONFIG += c++17
 
 # You can make your code fail to compile if it uses deprecated APIs.
@@ -9,16 +9,22 @@ SOURCES += \
     main.cpp \
     smartweather.cpp \
     station.cpp \
-    gestionstation.cpp
+    gestionstation.cpp \
+    mainwindow.cpp
 
 HEADERS += \
     smartweather.h \
     station.h \
-    gestionstation.h
+    gestionstation.h \
+    mainwindow.h \
+    releve_dialog.h \
+    attestation_dialog.h
 
 FORMS += \
     smartweather.ui \
-    gestionstation.ui
+    gestionstation.ui \
+    mainwindow.ui \
+    releve_dialog.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
