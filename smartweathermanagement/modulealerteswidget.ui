@@ -1,0 +1,912 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>ModuleAlertesWidget</class>
+ <widget class="QWidget" name="ModuleAlertesWidget">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1280</width>
+    <height>820</height>
+   </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>1200</width>
+    <height>760</height>
+   </size>
+  </property>
+  <property name="windowTitle">
+   <string>Smart Weather Management - Module 4 : Gestion des Alertes &amp; Prédictions</string>
+  </property>
+  <layout class="QHBoxLayout" name="mainHorizontalLayout">
+    <property name="spacing">
+     <number>0</number>
+    </property>
+    <property name="leftMargin">
+     <number>0</number>
+    </property>
+    <property name="topMargin">
+     <number>0</number>
+    </property>
+    <property name="rightMargin">
+     <number>0</number>
+    </property>
+    <property name="bottomMargin">
+     <number>0</number>
+    </property>
+    <!-- ========================================== -->
+    <!-- SIDEBAR LATERALE (Inspiré du guide ESPRIT) -->
+    <!-- ========================================== -->
+    <item>
+     <widget class="QFrame" name="sidebarFrame">
+      <property name="frameShape">
+       <enum>QFrame::NoFrame</enum>
+      </property>
+      <layout class="QVBoxLayout" name="sidebarVLayout">
+       <property name="spacing">
+        <number>8</number>
+       </property>
+       <property name="leftMargin">
+        <number>14</number>
+       </property>
+       <property name="topMargin">
+        <number>20</number>
+       </property>
+       <property name="rightMargin">
+        <number>14</number>
+       </property>
+       <property name="bottomMargin">
+        <number>16</number>
+       </property>
+       <!-- APP LOGO & TITRE -->
+       <item>
+        <layout class="QVBoxLayout" name="logoLayout">
+         <item>
+          <widget class="QLabel" name="lblAppTitle">
+           <property name="text">
+            <string>⚡ SMART WEATHER</string>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">font-size: 18px; font-weight: 800; color: #0284c7; letter-spacing: 1px;</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="lblModule">
+           <property name="text">
+            <string>Module 4 : Alertes &amp; Prédictions</string>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">font-size: 13px; color: #1e293b; font-weight: bold;</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <!-- USER CARD INFO -->
+       <item>
+        <widget class="QFrame" name="userCardFrame">
+         <property name="styleSheet">
+          <string notr="true">background-color: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px; margin-top: 10px; margin-bottom: 10px;</string>
+         </property>
+         <layout class="QVBoxLayout" name="userCardLayout">
+          <item>
+           <widget class="QLabel" name="lblUserBadge">
+            <property name="text">
+             <string>👤 vigilance_admin</string>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">font-weight: bold; color: #0f172a; font-size: 12px;</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="lblRoleBadge">
+            <property name="text">
+             <string>Responsable de la vigilance</string>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">color: #0284c7; font-size: 13px; font-weight: bold;</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <!-- NAVIGATION BUTTONS -->
+       <item>
+        <widget class="QPushButton" name="btnNavDashboard">
+         <property name="text">
+          <string>🏠  Supervision Globale</string>
+         </property>
+         <property name="cursor">
+          <cursorShape>PointingHandCursor</cursorShape>
+         </property>
+         <property name="checkable">
+          <bool>true</bool>
+         </property>
+         <property name="checked">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="btnNavAlertes">
+         <property name="text">
+          <string>📋  Journal des Alertes</string>
+         </property>
+         <property name="cursor">
+          <cursorShape>PointingHandCursor</cursorShape>
+         </property>
+         <property name="checkable">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="btnNavStats">
+         <property name="text">
+          <string>📊  Analyses Régionales</string>
+         </property>
+         <property name="cursor">
+          <cursorShape>PointingHandCursor</cursorShape>
+         </property>
+         <property name="checkable">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="btnNavPrediction">
+         <property name="text">
+          <string>❄️  Prédiction Risque Gel</string>
+         </property>
+         <property name="cursor">
+          <cursorShape>PointingHandCursor</cursorShape>
+         </property>
+         <property name="checkable">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <spacer name="sidebarSpacer">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>40</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <!-- WATCHDOG SENSOR TOGGLE -->
+       <item>
+        <widget class="QCheckBox" name="chkWatchdog">
+         <property name="text">
+          <string>📡 Veille Capteurs Auto</string>
+         </property>
+         <property name="checked">
+          <bool>true</bool>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">color: #0f172a; font-size: 13px; font-weight: bold;</string>
+         </property>
+        </widget>
+       </item>
+       <!-- DIGITAL CLOCK (QTimer) -->
+       <item>
+        <widget class="QLabel" name="lblDigitalClock">
+         <property name="text">
+          <string>2026-10-02 12:00:00</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">background-color: #ffffff; border: 1px solid #cbd5e1; border-radius: 6px; padding: 6px; color: #0369a1; font-family: monospace; font-size: 11px; font-weight: bold;</string>
+         </property>
+        </widget>
+       </item>
+       <!-- ROLE SWITCHER BUTTON -->
+       <item>
+        <widget class="QPushButton" name="btnSwitchRole">
+         <property name="cursor">
+          <cursorShape>PointingHandCursor</cursorShape>
+         </property>
+         <property name="text">
+          <string>🔄 Changer de Rôle</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </item>
+
+    <!-- ========================================== -->
+    <!-- CONTENU PRINCIPAL (QStackedWidget)        -->
+    <!-- ========================================== -->
+    <item>
+     <widget class="QWidget" name="contentArea" native="true">
+      <layout class="QVBoxLayout" name="contentVLayout">
+       <property name="spacing">
+        <number>10</number>
+       </property>
+       <property name="leftMargin">
+        <number>16</number>
+       </property>
+       <property name="topMargin">
+        <number>16</number>
+       </property>
+       <property name="rightMargin">
+        <number>16</number>
+       </property>
+       <property name="bottomMargin">
+        <number>16</number>
+       </property>
+       <!-- BANNER NOTIFICATION AVEC EFFET / ANIMATION -->
+       <item>
+        <widget class="QLabel" name="lblBannerInfo">
+         <property name="text">
+          <string>🟢 Surveillance active : 3 alertes en cours sur le territoire national.</string>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">background-color: #ffffff; color: #0284c7; border: 1px solid #93c5fd; border-radius: 8px; padding: 8px 14px; font-size: 12px; font-weight: bold;</string>
+         </property>
+        </widget>
+       </item>
+       <!-- STACKED WIDGET -->
+       <item>
+        <widget class="QStackedWidget" name="stackedWidget">
+         <property name="currentIndex">
+          <number>0</number>
+         </property>
+
+         <!-- ====================================== -->
+         <!-- PAGE 0 : SUPERVISION & DASHBOARD       -->
+         <!-- ====================================== -->
+         <widget class="QWidget" name="pageDashboard">
+          <layout class="QVBoxLayout" name="layoutPageDash">
+           <property name="spacing">
+            <number>14</number>
+           </property>
+           <!-- KPI CARDS -->
+           <item>
+            <layout class="QHBoxLayout" name="kpiDashLayout">
+             <property name="spacing">
+              <number>12</number>
+             </property>
+             <item>
+              <widget class="QFrame" name="kpiTotal">
+               <property name="styleSheet">
+                <string notr="true">background: qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 #0284c7, stop:1 #0369a1); color: white; border-radius: 10px; padding: 16px;</string>
+               </property>
+               <layout class="QVBoxLayout" name="kpiTotalVBox">
+                <item><widget class="QLabel" name="lblKpiTotalVal"><property name="text"><string>10</string></property><property name="styleSheet"><string notr="true">font-size: 28px; font-weight: 800;</string></property></widget></item>
+                <item><widget class="QLabel" name="lblKpiTotalTitle"><property name="text"><string>Total des Alertes</string></property><property name="styleSheet"><string notr="true">font-size: 13px; font-weight: bold; color: #ffffff;</string></property></widget></item>
+               </layout>
+              </widget>
+             </item>
+             <item>
+              <widget class="QFrame" name="kpiEnCours">
+               <property name="styleSheet">
+                <string notr="true">background: qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 #10b981, stop:1 #059669); color: white; border-radius: 10px; padding: 16px;</string>
+               </property>
+               <layout class="QVBoxLayout" name="kpiEnCoursVBox">
+                <item><widget class="QLabel" name="lblKpiEnCoursVal"><property name="text"><string>3</string></property><property name="styleSheet"><string notr="true">font-size: 28px; font-weight: 800;</string></property></widget></item>
+                <item><widget class="QLabel" name="lblKpiEnCoursTitle"><property name="text"><string>Alertes en cours (Vigilance active)</string></property><property name="styleSheet"><string notr="true">font-size: 13px; font-weight: bold; color: #ffffff;</string></property></widget></item>
+               </layout>
+              </widget>
+             </item>
+             <item>
+              <widget class="QFrame" name="kpiCritique">
+               <property name="styleSheet">
+                <string notr="true">background: qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 #ef4444, stop:1 #dc2626); color: white; border-radius: 10px; padding: 16px;</string>
+               </property>
+               <layout class="QVBoxLayout" name="kpiCritiqueVBox">
+                <item><widget class="QLabel" name="lblKpiCritiqueVal"><property name="text"><string>3</string></property><property name="styleSheet"><string notr="true">font-size: 28px; font-weight: 800;</string></property></widget></item>
+                <item><widget class="QLabel" name="lblKpiCritiqueTitle"><property name="text"><string>Sévérité ROUGE (Urgence absolue)</string></property><property name="styleSheet"><string notr="true">font-size: 13px; font-weight: bold; color: #ffffff;</string></property></widget></item>
+               </layout>
+              </widget>
+             </item>
+             <item>
+              <widget class="QFrame" name="kpiGel">
+               <property name="styleSheet">
+                <string notr="true">background: qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 #8b5cf6, stop:1 #7c3aed); color: white; border-radius: 10px; padding: 16px;</string>
+               </property>
+               <layout class="QVBoxLayout" name="kpiGelVBox">
+                <item><widget class="QLabel" name="lblKpiGelVal"><property name="text"><string>3</string></property><property name="styleSheet"><string notr="true">font-size: 28px; font-weight: 800;</string></property></widget></item>
+                <item><widget class="QLabel" name="lblKpiGelTitle"><property name="text"><string>Risques de Gel Détectés</string></property><property name="styleSheet"><string notr="true">font-size: 13px; font-weight: bold; color: #ffffff;</string></property></widget></item>
+               </layout>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <!-- QUICK SHORTCUT ACTIONS ROW -->
+           <item>
+            <widget class="QFrame" name="dashActionsFrame">
+             <property name="styleSheet">
+              <string notr="true">background-color: #ffffff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 12px;</string>
+             </property>
+             <layout class="QHBoxLayout" name="dashActionsHLayout">
+              <item>
+               <widget class="QLabel" name="lblQuickActions">
+                <property name="text">
+                 <string>⚡ Actions Rapides :</string>
+                </property>
+                <property name="styleSheet">
+                 <string notr="true">font-weight: bold; color: #0f172a; font-size: 13px;</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="btnDashNewAlert">
+                <property name="cursor"><cursorShape>PointingHandCursor</cursorShape></property>
+                <property name="text"><string>➕ Déclencher Nouvelle Alerte</string></property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="btnDashSimulSensor">
+                <property name="cursor"><cursorShape>PointingHandCursor</cursorShape></property>
+                <property name="text"><string>📡 Simuler Dépassement Seuil Capteur</string></property>
+                <property name="styleSheet">
+                 <string notr="true">background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #7c3aed, stop:1 #6d28d9);</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="btnDashTestFrost">
+                <property name="cursor"><cursorShape>PointingHandCursor</cursorShape></property>
+                <property name="text"><string>❄️ Évaluer Risque Gel Nocturne</string></property>
+                <property name="styleSheet">
+                 <string notr="true">background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #0f766e, stop:1 #115e59);</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <spacer name="dashActSpacer">
+                <property name="orientation"><enum>Qt::Horizontal</enum></property>
+                <property name="sizeHint" stdset="0"><size><width>40</width><height>20</height></size></property>
+               </spacer>
+              </item>
+              <item>
+               <widget class="QPushButton" name="btnDashExportPDF">
+                <property name="cursor"><cursorShape>PointingHandCursor</cursorShape></property>
+                <property name="text"><string>📄 Exporter Journal PDF</string></property>
+                <property name="styleSheet">
+                 <string notr="true">background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #be123c, stop:1 #9f1239);</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </widget>
+           </item>
+           <!-- RECENT ALERTS SUMMARY -->
+           <item>
+            <widget class="QGroupBox" name="groupDashRecent">
+             <property name="title">
+              <string>Registre des Dernières Alertes Météorologiques Émises</string>
+             </property>
+             <layout class="QVBoxLayout" name="dashRecentVLayout">
+              <item>
+               <widget class="QTableView" name="tableDashAlertes">
+                <property name="selectionMode">
+                 <enum>QAbstractItemView::SingleSelection</enum>
+                </property>
+                <property name="selectionBehavior">
+                 <enum>QAbstractItemView::SelectRows</enum>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+
+         <!-- ====================================== -->
+         <!-- PAGE 1 : JOURNAL DES ALERTES (CRUD)    -->
+         <!-- ====================================== -->
+         <widget class="QWidget" name="pageAlertes">
+          <layout class="QHBoxLayout" name="layoutPageAlertes">
+           <property name="spacing">
+            <number>12</number>
+           </property>
+           <!-- LEFT: FORMULAIRE -->
+           <item>
+            <widget class="QGroupBox" name="groupFormulaire">
+             <property name="minimumSize"><size><width>380</width><height>0</height></size></property>
+             <property name="maximumSize"><size><width>420</width><height>16777215</height></size></property>
+             <property name="title"><string>Formulaire de Déclenchement &amp; Saisie</string></property>
+             <layout class="QVBoxLayout" name="formVLayout">
+              <property name="spacing"><number>7</number></property>
+              <item>
+               <layout class="QHBoxLayout" name="layoutId">
+                <item><widget class="QLabel" name="lblId"><property name="text"><string>ID Alerte :</string></property></widget></item>
+                <item><widget class="QLineEdit" name="txtIdAlerte"><property name="placeholderText"><string>ex: ALT-2026-011</string></property></widget></item>
+                <item><widget class="QPushButton" name="btnGenererId"><property name="text"><string>Générer</string></property><property name="styleSheet"><string notr="true">background: #334155; color: white; font-weight: bold; padding: 7px 12px; font-size: 12px; font-weight: bold; border-radius: 6px;</string></property></widget></item>
+               </layout>
+              </item>
+              <item><widget class="QLabel" name="lblType"><property name="text"><string>Type d'Alerte :</string></property></widget></item>
+              <item>
+               <widget class="QComboBox" name="cmbTypeAlerte">
+                <item><property name="text"><string>Gel</string></property></item>
+                <item><property name="text"><string>Sirocco/Canicule</string></property></item>
+                <item><property name="text"><string>Tempête</string></property></item>
+                <item><property name="text"><string>Vent fort</string></property></item>
+               </widget>
+              </item>
+              <item><widget class="QLabel" name="lblSeverite"><property name="text"><string>Niveau de Sévérité :</string></property></widget></item>
+              <item>
+               <widget class="QComboBox" name="cmbSeverite">
+                <item><property name="text"><string>Jaune</string></property></item>
+                <item><property name="text"><string>Orange</string></property></item>
+                <item><property name="text"><string>Rouge</string></property></item>
+               </widget>
+              </item>
+              <item>
+               <layout class="QHBoxLayout" name="layoutStationGouv">
+                <item>
+                 <layout class="QVBoxLayout" name="vboxStation">
+                  <item><widget class="QLabel" name="lblStation"><property name="text"><string>ID Station :</string></property></widget></item>
+                  <item><widget class="QLineEdit" name="txtIdStation"><property name="placeholderText"><string>ex: ST-04_JEN</string></property></widget></item>
+                 </layout>
+                </item>
+                <item>
+                 <layout class="QVBoxLayout" name="vboxGouv">
+                  <item><widget class="QLabel" name="lblGouv"><property name="text"><string>Gouvernorat :</string></property></widget></item>
+                  <item>
+                   <widget class="QComboBox" name="cmbGouvernorat">
+                    <item><property name="text"><string>Tunis</string></property></item>
+                    <item><property name="text"><string>Ariana</string></property></item>
+                    <item><property name="text"><string>Ben Arous</string></property></item>
+                    <item><property name="text"><string>Manouba</string></property></item>
+                    <item><property name="text"><string>Nabeul</string></property></item>
+                    <item><property name="text"><string>Zaghouan</string></property></item>
+                    <item><property name="text"><string>Bizerte</string></property></item>
+                    <item><property name="text"><string>Béja</string></property></item>
+                    <item><property name="text"><string>Jendouba</string></property></item>
+                    <item><property name="text"><string>Le Kef</string></property></item>
+                    <item><property name="text"><string>Siliana</string></property></item>
+                    <item><property name="text"><string>Kairouan</string></property></item>
+                    <item><property name="text"><string>Kasserine</string></property></item>
+                    <item><property name="text"><string>Sidi Bouzid</string></property></item>
+                    <item><property name="text"><string>Sousse</string></property></item>
+                    <item><property name="text"><string>Monastir</string></property></item>
+                    <item><property name="text"><string>Mahdia</string></property></item>
+                    <item><property name="text"><string>Sfax</string></property></item>
+                    <item><property name="text"><string>Gafsa</string></property></item>
+                    <item><property name="text"><string>Tozeur</string></property></item>
+                    <item><property name="text"><string>Kébili</string></property></item>
+                    <item><property name="text"><string>Gabès</string></property></item>
+                    <item><property name="text"><string>Médenine</string></property></item>
+                    <item><property name="text"><string>Tataouine</string></property></item>
+                   </widget>
+                  </item>
+                 </layout>
+                </item>
+               </layout>
+              </item>
+              <item><widget class="QLabel" name="lblEmission"><property name="text"><string>Date &amp; Heure d'Émission :</string></property></widget></item>
+              <item>
+               <widget class="QDateTimeEdit" name="dtEmission">
+                <property name="calendarPopup"><bool>true</bool></property>
+                <property name="displayFormat"><string>yyyy-MM-dd HH:mm:ss</string></property>
+               </widget>
+              </item>
+              <item><widget class="QLabel" name="lblFin"><property name="text"><string>Date &amp; Heure de Fin :</string></property></widget></item>
+              <item>
+               <widget class="QDateTimeEdit" name="dtFin">
+                <property name="calendarPopup"><bool>true</bool></property>
+                <property name="displayFormat"><string>yyyy-MM-dd HH:mm:ss</string></property>
+               </widget>
+              </item>
+              <item><widget class="QLabel" name="lblStatut"><property name="text"><string>Statut :</string></property></widget></item>
+              <item>
+               <widget class="QComboBox" name="cmbStatut">
+                <item><property name="text"><string>En cours</string></property></item>
+                <item><property name="text"><string>Expirée</string></property></item>
+                <item><property name="text"><string>Archivée</string></property></item>
+               </widget>
+              </item>
+              <item><widget class="QLabel" name="lblDesc"><property name="text"><string>Description / Consignes opérationnelles :</string></property></widget></item>
+              <item>
+               <widget class="QTextEdit" name="txtDescription">
+                <property name="maximumSize"><size><width>16777215</width><height>60</height></size></property>
+                <property name="placeholderText"><string>Préciser la portée, les risques encourus et les mesures de précaution...</string></property>
+               </widget>
+              </item>
+              <!-- BOUTONS ACTIONS CRUD -->
+              <item>
+               <layout class="QGridLayout" name="gridCrudButtons">
+                <item row="0" column="0">
+                 <widget class="QPushButton" name="btnAjouter">
+                  <property name="cursor"><cursorShape>PointingHandCursor</cursorShape></property>
+                  <property name="text"><string>➕ Créer Alerte</string></property>
+                  <property name="styleSheet"><string notr="true">background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #22c55e, stop:1 #16a34a);</string></property>
+                 </widget>
+                </item>
+                <item row="0" column="1">
+                 <widget class="QPushButton" name="btnModifier">
+                  <property name="cursor"><cursorShape>PointingHandCursor</cursorShape></property>
+                  <property name="text"><string>✏️ Modifier</string></property>
+                 </widget>
+                </item>
+                <item row="1" column="0">
+                 <widget class="QPushButton" name="btnSupprimer">
+                  <property name="cursor"><cursorShape>PointingHandCursor</cursorShape></property>
+                  <property name="text"><string>🗑️ Supprimer</string></property>
+                  <property name="styleSheet"><string notr="true">background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #ef4444, stop:1 #dc2626);</string></property>
+                 </widget>
+                </item>
+                <item row="1" column="1">
+                 <widget class="QPushButton" name="btnArchiver">
+                  <property name="cursor"><cursorShape>PointingHandCursor</cursorShape></property>
+                  <property name="text"><string>📦 Archiver</string></property>
+                  <property name="styleSheet"><string notr="true">background: #334155; color: white; font-weight: bold;</string></property>
+                 </widget>
+                </item>
+               </layout>
+              </item>
+              <item>
+               <widget class="QPushButton" name="btnMettreAJourSeverite">
+                <property name="cursor"><cursorShape>PointingHandCursor</cursorShape></property>
+                <property name="text"><string>🔺 Escalade Sévérité (Jaune ➔ Orange ➔ Rouge)</string></property>
+                <property name="styleSheet"><string notr="true">background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #f97316, stop:1 #ea580c);</string></property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="btnTriggerAuto">
+                <property name="cursor"><cursorShape>PointingHandCursor</cursorShape></property>
+                <property name="text"><string>⚡ Déclencher Automatiquement (Capteur)</string></property>
+                <property name="styleSheet"><string notr="true">background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #7c3aed, stop:1 #6d28d9);</string></property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="btnViderChamps">
+                <property name="cursor"><cursorShape>PointingHandCursor</cursorShape></property>
+                <property name="text"><string>🔄 Réinitialiser le Formulaire</string></property>
+                <property name="styleSheet"><string notr="true">background: #f1f5f9; color: #334155; border: 1px solid #cbd5e1;</string></property>
+               </widget>
+              </item>
+             </layout>
+            </widget>
+           </item>
+           <!-- RIGHT: TABLEAU, RECHERCHE & EXPORTS -->
+           <item>
+            <layout class="QVBoxLayout" name="rightVLayout">
+             <property name="spacing"><number>10</number></property>
+             <!-- TOOLBAR FILTRES -->
+             <item>
+              <widget class="QFrame" name="frameToolbar">
+               <property name="styleSheet"><string notr="true">background-color: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; padding: 6px;</string></property>
+               <layout class="QHBoxLayout" name="toolbarLayout">
+                <item><widget class="QLabel" name="lblSearchIcon"><property name="text"><string>🔍</string></property></widget></item>
+                <item><widget class="QLineEdit" name="txtRecherche"><property name="placeholderText"><string>Recherche par ID, gouvernorat, station, mot-clé...</string></property></widget></item>
+                <item><widget class="QLabel" name="lblFiltreType"><property name="text"><string>Type :</string></property></widget></item>
+                <item>
+                 <widget class="QComboBox" name="cmbFiltreType">
+                  <item><property name="text"><string>Tous</string></property></item>
+                  <item><property name="text"><string>Gel</string></property></item>
+                  <item><property name="text"><string>Sirocco/Canicule</string></property></item>
+                  <item><property name="text"><string>Tempête</string></property></item>
+                  <item><property name="text"><string>Vent fort</string></property></item>
+                 </widget>
+                </item>
+                <item><widget class="QLabel" name="lblFiltreSev"><property name="text"><string>Sévérité :</string></property></widget></item>
+                <item>
+                 <widget class="QComboBox" name="cmbFiltreSeverite">
+                  <item><property name="text"><string>Tous</string></property></item>
+                  <item><property name="text"><string>Rouge</string></property></item>
+                  <item><property name="text"><string>Orange</string></property></item>
+                  <item><property name="text"><string>Jaune</string></property></item>
+                 </widget>
+                </item>
+                <item><widget class="QLabel" name="lblFiltreStatut"><property name="text"><string>Statut :</string></property></widget></item>
+                <item>
+                 <widget class="QComboBox" name="cmbFiltreStatut">
+                  <item><property name="text"><string>Tous</string></property></item>
+                  <item><property name="text"><string>En cours</string></property></item>
+                  <item><property name="text"><string>Expirée</string></property></item>
+                  <item><property name="text"><string>Archivée</string></property></item>
+                 </widget>
+                </item>
+               </layout>
+              </widget>
+             </item>
+             <!-- TOOLBAR ACTIONS TRIS & EXPORT -->
+             <item>
+              <layout class="QHBoxLayout" name="layoutActionsTable">
+               <item>
+                <widget class="QPushButton" name="btnTriSeverite">
+                 <property name="cursor"><cursorShape>PointingHandCursor</cursorShape></property>
+                 <property name="text"><string>🚨 Trier par Sévérité (Rouge ➔ Jaune)</string></property>
+                 <property name="styleSheet"><string notr="true">background: #0284c7;</string></property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QPushButton" name="btnTriDate">
+                 <property name="cursor"><cursorShape>PointingHandCursor</cursorShape></property>
+                 <property name="text"><string>📅 Trier par Date (Plus Récente)</string></property>
+                 <property name="styleSheet"><string notr="true">background: #0369a1;</string></property>
+                </widget>
+               </item>
+               <item>
+                <spacer name="spacerActions">
+                 <property name="orientation"><enum>Qt::Horizontal</enum></property>
+                 <property name="sizeHint" stdset="0"><size><width>40</width><height>20</height></size></property>
+                </spacer>
+               </item>
+               <item>
+                <widget class="QPushButton" name="btnExportTXT">
+                 <property name="cursor"><cursorShape>PointingHandCursor</cursorShape></property>
+                 <property name="text"><string>📝 Exporter TXT</string></property>
+                 <property name="styleSheet"><string notr="true">background: #0f766e;</string></property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QPushButton" name="btnExportPDF">
+                 <property name="cursor"><cursorShape>PointingHandCursor</cursorShape></property>
+                 <property name="text"><string>📄 Exporter PDF Réglementaire</string></property>
+                 <property name="styleSheet"><string notr="true">background: #be123c;</string></property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+             <!-- TABLEAU DES ALERTES -->
+             <item>
+              <widget class="QTableView" name="tableAlertes">
+               <property name="selectionMode"><enum>QAbstractItemView::SingleSelection</enum></property>
+               <property name="selectionBehavior"><enum>QAbstractItemView::SelectRows</enum></property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+          </layout>
+         </widget>
+
+         <!-- ====================================== -->
+         <!-- PAGE 2 : ANALYSES & STATISTIQUES       -->
+         <!-- ====================================== -->
+         <widget class="QWidget" name="pageStats">
+          <layout class="QVBoxLayout" name="layoutPageStats">
+           <property name="spacing"><number>12</number></property>
+           <!-- CONTROLS ROW -->
+           <item>
+            <widget class="QFrame" name="statsControlFrame">
+             <property name="styleSheet"><string notr="true">background-color: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px;</string></property>
+             <layout class="QHBoxLayout" name="statsCtrlHBox">
+              <item><widget class="QLabel" name="lblAnneeStats"><property name="text"><string>Sélectionner l'Année d'analyse :</string></property><property name="styleSheet"><string notr="true">font-weight: bold; color: #0f172a;</string></property></widget></item>
+              <item>
+               <widget class="QComboBox" name="cmbAnneeStats">
+                <property name="minimumSize"><size><width>120</width><height>0</height></size></property>
+                <item><property name="text"><string>2026</string></property></item>
+                <item><property name="text"><string>2025</string></property></item>
+                <item><property name="text"><string>2024</string></property></item>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="btnRefreshStats">
+                <property name="cursor"><cursorShape>PointingHandCursor</cursorShape></property>
+                <property name="text"><string>🔄 Actualiser le Graphique</string></property>
+               </widget>
+              </item>
+              <item>
+               <spacer name="spacerStats">
+                <property name="orientation"><enum>Qt::Horizontal</enum></property>
+                <property name="sizeHint" stdset="0"><size><width>40</width><height>20</height></size></property>
+               </spacer>
+              </item>
+             </layout>
+            </widget>
+           </item>
+           <!-- CONTAINER CHART -->
+           <item>
+            <widget class="QWidget" name="statsChartContainer" native="true">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+               <horstretch>0</horstretch>
+               <verstretch>1</verstretch>
+              </sizepolicy>
+             </property>
+             <layout class="QVBoxLayout" name="layoutCustomStats">
+              <property name="leftMargin"><number>0</number></property>
+              <property name="topMargin"><number>0</number></property>
+              <property name="rightMargin"><number>0</number></property>
+              <property name="bottomMargin"><number>0</number></property>
+             </layout>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+
+         <!-- ====================================== -->
+         <!-- PAGE 3 : INNOVATION PREDICTION GEL     -->
+         <!-- ====================================== -->
+         <widget class="QWidget" name="pagePrediction">
+          <layout class="QHBoxLayout" name="layoutPagePred">
+           <property name="spacing"><number>14</number></property>
+           <!-- LEFT: INPUTS AVEC SLIDERS PERSONNALISES -->
+           <item>
+            <widget class="QGroupBox" name="groupParamMeteo">
+             <property name="minimumSize"><size><width>440</width><height>0</height></size></property>
+             <property name="maximumSize"><size><width>480</width><height>16777215</height></size></property>
+             <property name="title"><string>Paramètres Météorologiques d'Entrée &amp; Sliders</string></property>
+             <layout class="QVBoxLayout" name="predParamLayout">
+              <property name="spacing"><number>10</number></property>
+              <item><widget class="QLabel" name="lblStationCible"><property name="text"><string>Station / Région Agricole surveillée :</string></property></widget></item>
+              <item>
+               <widget class="QComboBox" name="cmbStationCible">
+                <item><property name="text"><string>ST-04_JEN (Jendouba - Vallée de la Medjerda)</string></property></item>
+                <item><property name="text"><string>ST-06_SIL (Siliana - Hautes Plaines)</string></property></item>
+                <item><property name="text"><string>ST-09_KAS (Kasserine - Zone Montagneuse)</string></property></item>
+                <item><property name="text"><string>ST-07_KAI (Kairouan - Oliveraies)</string></property></item>
+                <item><property name="text"><string>ST-08_NAB (Nabeul - Agrumes Cap Bon)</string></property></item>
+               </widget>
+              </item>
+              <!-- SLIDER & SPINBOX TEMPERATURE -->
+              <item>
+               <layout class="QHBoxLayout" name="layoutTempHeader">
+                <item><widget class="QLabel" name="lblTemp"><property name="text"><string>T° au crépuscule (°C) :</string></property></widget></item>
+                <item><widget class="QDoubleSpinBox" name="spnTemp"><property name="minimum"><double>-10.0</double></property><property name="maximum"><double>35.0</double></property><property name="value"><double>4.5</double></property><property name="singleStep"><double>0.5</double></property></widget></item>
+               </layout>
+              </item>
+              <item>
+               <widget class="QSlider" name="sliderTemp">
+                <property name="orientation"><enum>Qt::Horizontal</enum></property>
+                <property name="minimum"><number>-100</number></property>
+                <property name="maximum"><number>350</number></property>
+                <property name="value"><number>45</number></property>
+               </widget>
+              </item>
+              <!-- SLIDER & SPINBOX HUMIDITE -->
+              <item>
+               <layout class="QHBoxLayout" name="layoutHumHeader">
+                <item><widget class="QLabel" name="lblHum"><property name="text"><string>Humidité relative de l'air (%) :</string></property></widget></item>
+                <item><widget class="QDoubleSpinBox" name="spnHum"><property name="minimum"><double>10.0</double></property><property name="maximum"><double>100.0</double></property><property name="value"><double>68.0</double></property><property name="singleStep"><double>1.0</double></property></widget></item>
+               </layout>
+              </item>
+              <item>
+               <widget class="QSlider" name="sliderHum">
+                <property name="orientation"><enum>Qt::Horizontal</enum></property>
+                <property name="minimum"><number>10</number></property>
+                <property name="maximum"><number>100</number></property>
+                <property name="value"><number>68</number></property>
+               </widget>
+              </item>
+              <!-- SLIDER & SPINBOX VENT -->
+              <item>
+               <layout class="QHBoxLayout" name="layoutVentHeader">
+                <item><widget class="QLabel" name="lblVent"><property name="text"><string>Vitesse moyenne du vent (km/h) :</string></property></widget></item>
+                <item><widget class="QDoubleSpinBox" name="spnVent"><property name="minimum"><double>0.0</double></property><property name="maximum"><double>100.0</double></property><property name="value"><double>3.5</double></property><property name="singleStep"><double>0.5</double></property></widget></item>
+               </layout>
+              </item>
+              <item>
+               <widget class="QSlider" name="sliderVent">
+                <property name="orientation"><enum>Qt::Horizontal</enum></property>
+                <property name="minimum"><number>0</number></property>
+                <property name="maximum"><number>1000</number></property>
+                <property name="value"><number>35</number></property>
+               </widget>
+              </item>
+              <!-- SLIDER & SPINBOX NEBULOSITE -->
+              <item>
+               <layout class="QHBoxLayout" name="layoutNebHeader">
+                <item><widget class="QLabel" name="lblNeb"><property name="text"><string>Nébulosité du ciel (0 Clair ➔ 8 Couvert) :</string></property></widget></item>
+                <item><widget class="QSpinBox" name="spnNeb"><property name="minimum"><number>0</number></property><property name="maximum"><number>8</number></property><property name="value"><number>0</number></property></widget></item>
+               </layout>
+              </item>
+              <item>
+               <widget class="QSlider" name="sliderNeb">
+                <property name="orientation"><enum>Qt::Horizontal</enum></property>
+                <property name="minimum"><number>0</number></property>
+                <property name="maximum"><number>8</number></property>
+                <property name="value"><number>0</number></property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QCheckBox" name="chkSolHumide">
+                <property name="text"><string>Sol récemment irrigué / humide</string></property>
+               </widget>
+              </item>
+              <item>
+               <spacer name="spacerPred">
+                <property name="orientation"><enum>Qt::Vertical</enum></property>
+                <property name="sizeHint" stdset="0"><size><width>20</width><height>20</height></size></property>
+               </spacer>
+              </item>
+              <item>
+               <widget class="QPushButton" name="btnCalculerPrediction">
+                <property name="cursor"><cursorShape>PointingHandCursor</cursorShape></property>
+                <property name="text"><string>🔮 Lancer la Prédiction Algorithmique</string></property>
+                <property name="styleSheet"><string notr="true">background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #0284c7, stop:1 #0369a1); padding: 12px; font-size: 13px;</string></property>
+               </widget>
+              </item>
+             </layout>
+            </widget>
+           </item>
+           <!-- RIGHT: RESULTATS & DIAGNOSTIC INNOVANT -->
+           <item>
+            <widget class="QGroupBox" name="groupResultatsPred">
+             <property name="title"><string>Diagnostic Agrométéorologique &amp; Décision Opérationnelle</string></property>
+             <layout class="QVBoxLayout" name="predResLayout">
+              <property name="spacing"><number>12</number></property>
+              <!-- BADGE DU RISQUE -->
+              <item>
+               <widget class="QFrame" name="frameBadgeRisque">
+                <property name="styleSheet"><string notr="true">background-color: #fef2f2; border: 2px solid #ef4444; border-radius: 8px; padding: 12px;</string></property>
+                <layout class="QHBoxLayout" name="badgeLayout">
+                 <item><widget class="QLabel" name="lblRisqueIcon"><property name="text"><string>🚨</string></property><property name="styleSheet"><string notr="true">font-size: 32px;</string></property></widget></item>
+                 <item>
+                  <layout class="QVBoxLayout" name="badgeTextLayout">
+                   <item><widget class="QLabel" name="lblNiveauRisqueText"><property name="text"><string>RISQUE ÉLEVÉ DE GEL BLANC (Niveau Orange)</string></property><property name="styleSheet"><string notr="true">font-size: 16px; font-weight: bold; color: #b91c1c;</string></property></widget></item>
+                   <item><widget class="QLabel" name="lblProbabiliteText"><property name="text"><string>Probabilité estimée : 80% | Type : Gel radiatif nocturne</string></property><property name="styleSheet"><string notr="true">font-size: 12px; color: #7f1d1d;</string></property></widget></item>
+                  </layout>
+                 </item>
+                </layout>
+               </widget>
+              </item>
+              <!-- ESTIMATIONS THERMIQUES -->
+              <item>
+               <layout class="QHBoxLayout" name="layoutThermique">
+                <item>
+                 <widget class="QFrame" name="boxTMin">
+                  <property name="styleSheet"><string notr="true">background: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px;</string></property>
+                  <layout class="QVBoxLayout" name="vboxTMin">
+                   <item><widget class="QLabel" name="lblTMinTitre"><property name="text"><string>T° Min. Nocturne Prévue</string></property><property name="styleSheet"><string notr="true">color: #0f172a; font-size: 13px; font-weight: bold;</string></property></widget></item>
+                   <item><widget class="QLabel" name="lblTMinValeur"><property name="text"><string>-1.2 °C</string></property><property name="styleSheet"><string notr="true">font-size: 22px; font-weight: bold; color: #0284c7;</string></property></widget></item>
+                  </layout>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QFrame" name="boxDew">
+                  <property name="styleSheet"><string notr="true">background: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px;</string></property>
+                  <layout class="QVBoxLayout" name="vboxDew">
+                   <item><widget class="QLabel" name="lblDewTitre"><property name="text"><string>Point de Rosée Calculé</string></property><property name="styleSheet"><string notr="true">color: #0f172a; font-size: 13px; font-weight: bold;</string></property></widget></item>
+                   <item><widget class="QLabel" name="lblDewValeur"><property name="text"><string>-0.8 °C</string></property><property name="styleSheet"><string notr="true">font-size: 22px; font-weight: bold; color: #0d9488;</string></property></widget></item>
+                  </layout>
+                 </widget>
+                </item>
+               </layout>
+              </item>
+              <!-- DIAGNOSTIC -->
+              <item><widget class="QLabel" name="lblTitreDiag"><property name="text"><string>Analyse Physique &amp; Diagnostic :</string></property><property name="styleSheet"><string notr="true">font-weight: bold; color: #0f172a;</string></property></widget></item>
+              <item>
+               <widget class="QTextEdit" name="txtDiagnostic">
+                <property name="readOnly"><bool>true</bool></property>
+                <property name="maximumSize"><size><width>16777215</width><height>85</height></size></property>
+               </widget>
+              </item>
+              <!-- RECOMMANDATIONS -->
+              <item><widget class="QLabel" name="lblTitreRecom"><property name="text"><string>Mesures Préventives &amp; Protection Agricole Immédiate :</string></property><property name="styleSheet"><string notr="true">font-weight: bold; color: #0f172a;</string></property></widget></item>
+              <item>
+               <widget class="QTextEdit" name="txtRecommandations">
+                <property name="readOnly"><bool>true</bool></property>
+               </widget>
+              </item>
+              <!-- BOUTON DECLENCHEMENT RAPIDE -->
+              <item>
+               <widget class="QPushButton" name="btnDeclencherAlerteGel">
+                <property name="cursor"><cursorShape>PointingHandCursor</cursorShape></property>
+                <property name="text"><string>🚨 Déclencher Automatiquement l'Alerte Gel pour cette Station</string></property>
+                <property name="styleSheet"><string notr="true">background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #ef4444, stop:1 #dc2626); color: white; padding: 12px; font-size: 13px; font-weight: bold;</string></property>
+               </widget>
+              </item>
+             </layout>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

@@ -1,24 +1,39 @@
-QT += core gui widgets sql
+QT += core gui widgets sql printsupport
 CONFIG += c++17
 
-# You can make your code fail to compile if it uses deprecated APIs.
-# In order to do so, uncomment the following line.
-#DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
-
 SOURCES += \
+    employe.cpp \
     main.cpp \
-    smartweather.cpp
+    smartweather.cpp \
+    alerte.cpp \
+    predictiongel.cpp \
+    statsview.cpp \
+    logindialog.cpp \
+    connection.cpp \
+    modulealerteswidget.cpp
 
 HEADERS += \
-    smartweather.h
+    employe.h \
+    smartweather.h \
+    alerte.h \
+    predictiongel.h \
+    statsview.h \
+    logindialog.h \
+    connection.h \
+    modulealerteswidget.h
 
 FORMS += \
-    smartweather.ui
+    smartweather.ui \
+    logindialog.ui \
+    modulealerteswidget.ui
 
-# Default rules for deployment.
+RESOURCES += \
+    resources.qrc
+
+DISTFILES += \
+    gitignore \
+    style.qss
+
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
-
-DISTFILES += \
-    gitignore
