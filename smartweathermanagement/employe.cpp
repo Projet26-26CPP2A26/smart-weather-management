@@ -47,7 +47,7 @@ bool Employe::ajouter() {
     query.bindValue(":poste", poste);
     query.bindValue(":structure", structure);
     query.bindValue(":gouvernorat", gouvernorat);
-    query.bindValue(":date_recrutement", date_recrutement);
+    query.bindValue(":date_recrutement", date_recrutement.toString("yyyy-MM-dd"));
     query.bindValue(":statut", statut);
     query.bindValue(":type_horaire", type_horaire);
 
@@ -103,7 +103,7 @@ bool Employe::modifier() {
     query.bindValue(":poste", poste);
     query.bindValue(":structure", structure);
     query.bindValue(":gouvernorat", gouvernorat);
-    query.bindValue(":date_recrutement", date_recrutement);
+    query.bindValue(":date_recrutement", date_recrutement.toString("yyyy-MM-dd"));
     query.bindValue(":statut", statut);
     query.bindValue(":type_horaire", type_horaire);
 
@@ -329,6 +329,9 @@ QSqlQueryModel* Employe::trier(const QString &critere, const QString &ordre) {
     else if (critere == "Poste") col = "Poste";
     else if (critere == "Date de recrutement") col = "Date_Recrutement";
     else if (critere == "Structure") col = "Structure";
+    else if (critere == "Gouvernorat") col = "Gouvernorat";
+    else if (critere == "Statut") col = "Statut";
+    else if (critere == "ID") col = "ID_Employe";
 
     QString direction = (ordre.toUpper() == "DESC") ? "DESC" : "ASC";
     QString sql = QString("SELECT ID_Employe, Nom, Prenom, Email, Poste, Structure, Gouvernorat, Date_Recrutement, Statut, Type_Horaire "
@@ -350,19 +353,31 @@ QSqlQueryModel* Employe::trier(const QString &critere, const QString &ordre) {
 
 QSqlQueryModel* Employe::rechercher(const QString &texte, const QString &critere, const QString &tri) {
     QSqlQueryModel* model = new QSqlQueryModel();
-    QString colRecherche = "Nom";
-    if (critere == "Poste") colRecherche = "Poste";
-    else if (critere == "Structure") colRecherche = "Structure";
-    else if (critere == "Gouvernorat") colRecherche = "Gouvernorat";
-
     QString colTri = "Nom";
     if (tri == "Poste") colTri = "Poste";
     else if (tri == "Date de recrutement") colTri = "Date_Recrutement";
     else if (tri == "Structure") colTri = "Structure";
+    else if (tri == "Gouvernorat") colTri = "Gouvernorat";
+    else if (tri == "ID") colTri = "ID_Employe";
 
     QSqlQuery query;
-    query.prepare(QString("SELECT ID_Employe, Nom, Prenom, Email, Poste, Structure, Gouvernorat, Date_Recrutement, Statut, Type_Horaire "
-                          "FROM Employe WHERE UPPER(%1) LIKE UPPER(:val) ORDER BY %2 ASC").arg(colRecherche, colTri));
+    if (critere == "Tous" || critere.isEmpty()) {
+        query.prepare(QString("SELECT ID_Employe, Nom, Prenom, Email, Poste, Structure, Gouvernorat, Date_Recrutement, Statut, Type_Horaire "
+                              "FROM Employe WHERE (UPPER(Nom) LIKE UPPER(:val) OR UPPER(Prenom) LIKE UPPER(:val) "
+                              "OR UPPER(Email) LIKE UPPER(:val) OR UPPER(Poste) LIKE UPPER(:val) "
+                              "OR UPPER(Gouvernorat) LIKE UPPER(:val) OR UPPER(ID_Employe) LIKE UPPER(:val)) "
+                              "ORDER BY %1 ASC").arg(colTri));
+    } else {
+        QString colRecherche = "Nom";
+        if (critere == "Poste") colRecherche = "Poste";
+        else if (critere == "Structure") colRecherche = "Structure";
+        else if (critere == "Gouvernorat") colRecherche = "Gouvernorat";
+        else if (critere == "ID") colRecherche = "ID_Employe";
+        else if (critere == "Email") colRecherche = "Email";
+
+        query.prepare(QString("SELECT ID_Employe, Nom, Prenom, Email, Poste, Structure, Gouvernorat, Date_Recrutement, Statut, Type_Horaire "
+                              "FROM Employe WHERE UPPER(%1) LIKE UPPER(:val) ORDER BY %2 ASC").arg(colRecherche, colTri));
+    }
     query.bindValue(":val", "%" + texte + "%");
     query.exec();
 

@@ -50,6 +50,7 @@ private slots:
 private:
     bool initDb();
     void initUtilisateurs();
+    void initEmployes();
     static QString hasher(const QString &motDePasse, const QString &sel);
     void appliquerStyle();
 

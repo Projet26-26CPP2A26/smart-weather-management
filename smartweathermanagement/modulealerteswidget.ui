@@ -417,162 +417,285 @@
            </property>
            <!-- LEFT: FORMULAIRE -->
            <item>
-            <widget class="QGroupBox" name="groupFormulaire">
-             <property name="minimumSize"><size><width>380</width><height>0</height></size></property>
-             <property name="maximumSize"><size><width>420</width><height>16777215</height></size></property>
-             <property name="title"><string>Formulaire de Déclenchement &amp; Saisie</string></property>
-             <layout class="QVBoxLayout" name="formVLayout">
-              <property name="spacing"><number>7</number></property>
-              <item>
-               <layout class="QHBoxLayout" name="layoutId">
-                <item><widget class="QLabel" name="lblId"><property name="text"><string>ID Alerte :</string></property></widget></item>
-                <item><widget class="QLineEdit" name="txtIdAlerte"><property name="placeholderText"><string>ex: ALT-2026-011</string></property></widget></item>
-                <item><widget class="QPushButton" name="btnGenererId"><property name="text"><string>Générer</string></property><property name="styleSheet"><string notr="true">background: #334155; color: white; font-weight: bold; padding: 7px 12px; font-size: 12px; font-weight: bold; border-radius: 6px;</string></property></widget></item>
-               </layout>
-              </item>
-              <item><widget class="QLabel" name="lblType"><property name="text"><string>Type d'Alerte :</string></property></widget></item>
-              <item>
-               <widget class="QComboBox" name="cmbTypeAlerte">
-                <item><property name="text"><string>Gel</string></property></item>
-                <item><property name="text"><string>Sirocco/Canicule</string></property></item>
-                <item><property name="text"><string>Tempête</string></property></item>
-                <item><property name="text"><string>Vent fort</string></property></item>
-               </widget>
-              </item>
-              <item><widget class="QLabel" name="lblSeverite"><property name="text"><string>Niveau de Sévérité :</string></property></widget></item>
-              <item>
-               <widget class="QComboBox" name="cmbSeverite">
-                <item><property name="text"><string>Jaune</string></property></item>
-                <item><property name="text"><string>Orange</string></property></item>
-                <item><property name="text"><string>Rouge</string></property></item>
-               </widget>
-              </item>
-              <item>
-               <layout class="QHBoxLayout" name="layoutStationGouv">
-                <item>
-                 <layout class="QVBoxLayout" name="vboxStation">
-                  <item><widget class="QLabel" name="lblStation"><property name="text"><string>ID Station :</string></property></widget></item>
-                  <item><widget class="QLineEdit" name="txtIdStation"><property name="placeholderText"><string>ex: ST-04_JEN</string></property></widget></item>
-                 </layout>
-                </item>
-                <item>
-                 <layout class="QVBoxLayout" name="vboxGouv">
-                  <item><widget class="QLabel" name="lblGouv"><property name="text"><string>Gouvernorat :</string></property></widget></item>
+            <widget class="QScrollArea" name="scrollAreaForm">
+             <property name="widgetResizable">
+              <bool>true</bool>
+             </property>
+             <property name="frameShape">
+              <enum>QFrame::NoFrame</enum>
+             </property>
+             <property name="horizontalScrollBarPolicy">
+              <enum>Qt::ScrollBarAlwaysOff</enum>
+             </property>
+             <property name="minimumSize">
+              <size>
+               <width>390</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>450</width>
+               <height>16777215</height>
+              </size>
+             </property>
+             <widget class="QWidget" name="scrollWidgetForm">
+              <property name="geometry">
+               <rect>
+                <x>0</x>
+                <y>0</y>
+                <width>430</width>
+                <height>680</height>
+               </rect>
+              </property>
+              <layout class="QVBoxLayout" name="scrollVLayout">
+               <property name="spacing">
+                <number>0</number>
+               </property>
+               <property name="leftMargin">
+                <number>0</number>
+               </property>
+               <property name="topMargin">
+                <number>0</number>
+               </property>
+               <property name="rightMargin">
+                <number>4</number>
+               </property>
+               <property name="bottomMargin">
+                <number>0</number>
+               </property>
+               <item>
+                <widget class="QGroupBox" name="groupFormulaire">
+                 <property name="title">
+                  <string>Formulaire de Déclenchement &amp;&amp; Saisie</string>
+                 </property>
+                 <layout class="QVBoxLayout" name="formVLayout">
+                  <property name="spacing">
+                   <number>7</number>
+                  </property>
+                  <property name="leftMargin">
+                   <number>12</number>
+                  </property>
+                  <property name="topMargin">
+                   <number>16</number>
+                  </property>
+                  <property name="rightMargin">
+                   <number>12</number>
+                  </property>
+                  <property name="bottomMargin">
+                   <number>14</number>
+                  </property>
+                  <!-- ID ALERTE -->
                   <item>
-                   <widget class="QComboBox" name="cmbGouvernorat">
-                    <item><property name="text"><string>Tunis</string></property></item>
-                    <item><property name="text"><string>Ariana</string></property></item>
-                    <item><property name="text"><string>Ben Arous</string></property></item>
-                    <item><property name="text"><string>Manouba</string></property></item>
-                    <item><property name="text"><string>Nabeul</string></property></item>
-                    <item><property name="text"><string>Zaghouan</string></property></item>
-                    <item><property name="text"><string>Bizerte</string></property></item>
-                    <item><property name="text"><string>Béja</string></property></item>
-                    <item><property name="text"><string>Jendouba</string></property></item>
-                    <item><property name="text"><string>Le Kef</string></property></item>
-                    <item><property name="text"><string>Siliana</string></property></item>
-                    <item><property name="text"><string>Kairouan</string></property></item>
-                    <item><property name="text"><string>Kasserine</string></property></item>
-                    <item><property name="text"><string>Sidi Bouzid</string></property></item>
-                    <item><property name="text"><string>Sousse</string></property></item>
-                    <item><property name="text"><string>Monastir</string></property></item>
-                    <item><property name="text"><string>Mahdia</string></property></item>
-                    <item><property name="text"><string>Sfax</string></property></item>
-                    <item><property name="text"><string>Gafsa</string></property></item>
-                    <item><property name="text"><string>Tozeur</string></property></item>
-                    <item><property name="text"><string>Kébili</string></property></item>
-                    <item><property name="text"><string>Gabès</string></property></item>
-                    <item><property name="text"><string>Médenine</string></property></item>
-                    <item><property name="text"><string>Tataouine</string></property></item>
+                   <layout class="QHBoxLayout" name="layoutId">
+                    <item><widget class="QLabel" name="lblId"><property name="text"><string>ID Alerte :</string></property></widget></item>
+                    <item><widget class="QLineEdit" name="txtIdAlerte"><property name="placeholderText"><string>ex: ALT-2026-011</string></property></widget></item>
+                    <item><widget class="QPushButton" name="btnGenererId"><property name="text"><string>Générer</string></property><property name="styleSheet"><string notr="true">background: #334155; color: white; font-weight: bold; padding: 7px 12px; font-size: 12px; border-radius: 6px;</string></property></widget></item>
+                   </layout>
+                  </item>
+                  <!-- TYPE & SEVERITE COTE A COTE -->
+                  <item>
+                   <layout class="QHBoxLayout" name="layoutTypeSev">
+                    <property name="spacing">
+                     <number>10</number>
+                    </property>
+                    <item>
+                     <layout class="QVBoxLayout" name="vboxType">
+                      <property name="spacing"><number>3</number></property>
+                      <item><widget class="QLabel" name="lblType"><property name="text"><string>Type d'Alerte :</string></property></widget></item>
+                      <item>
+                       <widget class="QComboBox" name="cmbTypeAlerte">
+                        <item><property name="text"><string>Gel</string></property></item>
+                        <item><property name="text"><string>Sirocco/Canicule</string></property></item>
+                        <item><property name="text"><string>Tempête</string></property></item>
+                        <item><property name="text"><string>Vent fort</string></property></item>
+                       </widget>
+                      </item>
+                     </layout>
+                    </item>
+                    <item>
+                     <layout class="QVBoxLayout" name="vboxSev">
+                      <property name="spacing"><number>3</number></property>
+                      <item><widget class="QLabel" name="lblSeverite"><property name="text"><string>Niveau de Sévérité :</string></property></widget></item>
+                      <item>
+                       <widget class="QComboBox" name="cmbSeverite">
+                        <item><property name="text"><string>Jaune</string></property></item>
+                        <item><property name="text"><string>Orange</string></property></item>
+                        <item><property name="text"><string>Rouge</string></property></item>
+                       </widget>
+                      </item>
+                     </layout>
+                    </item>
+                   </layout>
+                  </item>
+                  <!-- STATION & GOUVERNORAT -->
+                  <item>
+                   <layout class="QHBoxLayout" name="layoutStationGouv">
+                    <property name="spacing">
+                     <number>10</number>
+                    </property>
+                    <item>
+                     <layout class="QVBoxLayout" name="vboxStation">
+                      <property name="spacing"><number>3</number></property>
+                      <item><widget class="QLabel" name="lblStation"><property name="text"><string>ID Station :</string></property></widget></item>
+                      <item><widget class="QLineEdit" name="txtIdStation"><property name="placeholderText"><string>ex: ST-04_JEN</string></property></widget></item>
+                     </layout>
+                    </item>
+                    <item>
+                     <layout class="QVBoxLayout" name="vboxGouv">
+                      <property name="spacing"><number>3</number></property>
+                      <item><widget class="QLabel" name="lblGouv"><property name="text"><string>Gouvernorat :</string></property></widget></item>
+                      <item>
+                       <widget class="QComboBox" name="cmbGouvernorat">
+                        <item><property name="text"><string>Tunis</string></property></item>
+                        <item><property name="text"><string>Ariana</string></property></item>
+                        <item><property name="text"><string>Ben Arous</string></property></item>
+                        <item><property name="text"><string>Manouba</string></property></item>
+                        <item><property name="text"><string>Nabeul</string></property></item>
+                        <item><property name="text"><string>Zaghouan</string></property></item>
+                        <item><property name="text"><string>Bizerte</string></property></item>
+                        <item><property name="text"><string>Béja</string></property></item>
+                        <item><property name="text"><string>Jendouba</string></property></item>
+                        <item><property name="text"><string>Le Kef</string></property></item>
+                        <item><property name="text"><string>Siliana</string></property></item>
+                        <item><property name="text"><string>Kairouan</string></property></item>
+                        <item><property name="text"><string>Kasserine</string></property></item>
+                        <item><property name="text"><string>Sidi Bouzid</string></property></item>
+                        <item><property name="text"><string>Sousse</string></property></item>
+                        <item><property name="text"><string>Monastir</string></property></item>
+                        <item><property name="text"><string>Mahdia</string></property></item>
+                        <item><property name="text"><string>Sfax</string></property></item>
+                        <item><property name="text"><string>Gafsa</string></property></item>
+                        <item><property name="text"><string>Tozeur</string></property></item>
+                        <item><property name="text"><string>Kébili</string></property></item>
+                        <item><property name="text"><string>Gabès</string></property></item>
+                        <item><property name="text"><string>Médenine</string></property></item>
+                        <item><property name="text"><string>Tataouine</string></property></item>
+                       </widget>
+                      </item>
+                     </layout>
+                    </item>
+                   </layout>
+                  </item>
+                  <!-- DATES EMISSION & FIN COTE A COTE -->
+                  <item>
+                   <layout class="QHBoxLayout" name="layoutDates">
+                    <property name="spacing">
+                     <number>10</number>
+                    </property>
+                    <item>
+                     <layout class="QVBoxLayout" name="vboxEmission">
+                      <property name="spacing"><number>3</number></property>
+                      <item><widget class="QLabel" name="lblEmission"><property name="text"><string>Date &amp; Heure d'Émission :</string></property></widget></item>
+                      <item>
+                       <widget class="QDateTimeEdit" name="dtEmission">
+                        <property name="calendarPopup"><bool>true</bool></property>
+                        <property name="displayFormat"><string>yyyy-MM-dd HH:mm</string></property>
+                       </widget>
+                      </item>
+                     </layout>
+                    </item>
+                    <item>
+                     <layout class="QVBoxLayout" name="vboxFin">
+                      <property name="spacing"><number>3</number></property>
+                      <item><widget class="QLabel" name="lblFin"><property name="text"><string>Date &amp; Heure de Fin :</string></property></widget></item>
+                      <item>
+                       <widget class="QDateTimeEdit" name="dtFin">
+                        <property name="calendarPopup"><bool>true</bool></property>
+                        <property name="displayFormat"><string>yyyy-MM-dd HH:mm</string></property>
+                       </widget>
+                      </item>
+                     </layout>
+                    </item>
+                   </layout>
+                  </item>
+                  <!-- STATUT -->
+                  <item>
+                   <layout class="QVBoxLayout" name="vboxStatut">
+                    <property name="spacing"><number>3</number></property>
+                    <item><widget class="QLabel" name="lblStatut"><property name="text"><string>Statut :</string></property></widget></item>
+                    <item>
+                     <widget class="QComboBox" name="cmbStatut">
+                      <item><property name="text"><string>En cours</string></property></item>
+                      <item><property name="text"><string>Expirée</string></property></item>
+                      <item><property name="text"><string>Archivée</string></property></item>
+                     </widget>
+                    </item>
+                   </layout>
+                  </item>
+                  <!-- DESCRIPTION -->
+                  <item>
+                   <layout class="QVBoxLayout" name="vboxDesc">
+                    <property name="spacing"><number>3</number></property>
+                    <item><widget class="QLabel" name="lblDesc"><property name="text"><string>Description / Consignes opérationnelles :</string></property></widget></item>
+                    <item>
+                     <widget class="QTextEdit" name="txtDescription">
+                      <property name="maximumSize"><size><width>16777215</width><height>55</height></size></property>
+                      <property name="placeholderText"><string>Préciser la portée, les risques encourus et les mesures de précaution...</string></property>
+                     </widget>
+                    </item>
+                   </layout>
+                  </item>
+                  <!-- BOUTONS ACTIONS CRUD -->
+                  <item>
+                   <layout class="QGridLayout" name="gridCrudButtons">
+                    <property name="spacing"><number>6</number></property>
+                    <item row="0" column="0">
+                     <widget class="QPushButton" name="btnAjouter">
+                      <property name="cursor"><cursorShape>PointingHandCursor</cursorShape></property>
+                      <property name="text"><string>➕ Créer Alerte</string></property>
+                      <property name="styleSheet"><string notr="true">background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #22c55e, stop:1 #16a34a); padding: 8px 12px;</string></property>
+                     </widget>
+                    </item>
+                    <item row="0" column="1">
+                     <widget class="QPushButton" name="btnModifier">
+                      <property name="cursor"><cursorShape>PointingHandCursor</cursorShape></property>
+                      <property name="text"><string>✏️ Modifier</string></property>
+                      <property name="styleSheet"><string notr="true">padding: 8px 12px;</string></property>
+                     </widget>
+                    </item>
+                    <item row="1" column="0">
+                     <widget class="QPushButton" name="btnSupprimer">
+                      <property name="cursor"><cursorShape>PointingHandCursor</cursorShape></property>
+                      <property name="text"><string>🗑️ Supprimer</string></property>
+                      <property name="styleSheet"><string notr="true">background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #ef4444, stop:1 #dc2626); padding: 8px 12px;</string></property>
+                     </widget>
+                    </item>
+                    <item row="1" column="1">
+                     <widget class="QPushButton" name="btnArchiver">
+                      <property name="cursor"><cursorShape>PointingHandCursor</cursorShape></property>
+                      <property name="text"><string>📦 Archiver</string></property>
+                      <property name="styleSheet"><string notr="true">background: #334155; color: white; font-weight: bold; padding: 8px 12px;</string></property>
+                     </widget>
+                    </item>
+                   </layout>
+                  </item>
+                  <item>
+                   <widget class="QPushButton" name="btnMettreAJourSeverite">
+                    <property name="cursor"><cursorShape>PointingHandCursor</cursorShape></property>
+                    <property name="text"><string>🔺 Escalade Sévérité (Jaune ➔ Orange ➔ Rouge)</string></property>
+                    <property name="styleSheet"><string notr="true">background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #f97316, stop:1 #ea580c); padding: 8px 12px;</string></property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QPushButton" name="btnTriggerAuto">
+                    <property name="cursor"><cursorShape>PointingHandCursor</cursorShape></property>
+                    <property name="text"><string>⚡ Déclencher Automatiquement (Capteur)</string></property>
+                    <property name="styleSheet"><string notr="true">background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #7c3aed, stop:1 #6d28d9); padding: 8px 12px;</string></property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QPushButton" name="btnViderChamps">
+                    <property name="cursor"><cursorShape>PointingHandCursor</cursorShape></property>
+                    <property name="text"><string>🔄 Réinitialiser le Formulaire</string></property>
+                    <property name="styleSheet"><string notr="true">background: #f1f5f9; color: #334155; border: 1px solid #cbd5e1; padding: 7px 12px;</string></property>
                    </widget>
                   </item>
                  </layout>
-                </item>
-               </layout>
-              </item>
-              <item><widget class="QLabel" name="lblEmission"><property name="text"><string>Date &amp; Heure d'Émission :</string></property></widget></item>
-              <item>
-               <widget class="QDateTimeEdit" name="dtEmission">
-                <property name="calendarPopup"><bool>true</bool></property>
-                <property name="displayFormat"><string>yyyy-MM-dd HH:mm:ss</string></property>
-               </widget>
-              </item>
-              <item><widget class="QLabel" name="lblFin"><property name="text"><string>Date &amp; Heure de Fin :</string></property></widget></item>
-              <item>
-               <widget class="QDateTimeEdit" name="dtFin">
-                <property name="calendarPopup"><bool>true</bool></property>
-                <property name="displayFormat"><string>yyyy-MM-dd HH:mm:ss</string></property>
-               </widget>
-              </item>
-              <item><widget class="QLabel" name="lblStatut"><property name="text"><string>Statut :</string></property></widget></item>
-              <item>
-               <widget class="QComboBox" name="cmbStatut">
-                <item><property name="text"><string>En cours</string></property></item>
-                <item><property name="text"><string>Expirée</string></property></item>
-                <item><property name="text"><string>Archivée</string></property></item>
-               </widget>
-              </item>
-              <item><widget class="QLabel" name="lblDesc"><property name="text"><string>Description / Consignes opérationnelles :</string></property></widget></item>
-              <item>
-               <widget class="QTextEdit" name="txtDescription">
-                <property name="maximumSize"><size><width>16777215</width><height>60</height></size></property>
-                <property name="placeholderText"><string>Préciser la portée, les risques encourus et les mesures de précaution...</string></property>
-               </widget>
-              </item>
-              <!-- BOUTONS ACTIONS CRUD -->
-              <item>
-               <layout class="QGridLayout" name="gridCrudButtons">
-                <item row="0" column="0">
-                 <widget class="QPushButton" name="btnAjouter">
-                  <property name="cursor"><cursorShape>PointingHandCursor</cursorShape></property>
-                  <property name="text"><string>➕ Créer Alerte</string></property>
-                  <property name="styleSheet"><string notr="true">background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #22c55e, stop:1 #16a34a);</string></property>
-                 </widget>
-                </item>
-                <item row="0" column="1">
-                 <widget class="QPushButton" name="btnModifier">
-                  <property name="cursor"><cursorShape>PointingHandCursor</cursorShape></property>
-                  <property name="text"><string>✏️ Modifier</string></property>
-                 </widget>
-                </item>
-                <item row="1" column="0">
-                 <widget class="QPushButton" name="btnSupprimer">
-                  <property name="cursor"><cursorShape>PointingHandCursor</cursorShape></property>
-                  <property name="text"><string>🗑️ Supprimer</string></property>
-                  <property name="styleSheet"><string notr="true">background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #ef4444, stop:1 #dc2626);</string></property>
-                 </widget>
-                </item>
-                <item row="1" column="1">
-                 <widget class="QPushButton" name="btnArchiver">
-                  <property name="cursor"><cursorShape>PointingHandCursor</cursorShape></property>
-                  <property name="text"><string>📦 Archiver</string></property>
-                  <property name="styleSheet"><string notr="true">background: #334155; color: white; font-weight: bold;</string></property>
-                 </widget>
-                </item>
-               </layout>
-              </item>
-              <item>
-               <widget class="QPushButton" name="btnMettreAJourSeverite">
-                <property name="cursor"><cursorShape>PointingHandCursor</cursorShape></property>
-                <property name="text"><string>🔺 Escalade Sévérité (Jaune ➔ Orange ➔ Rouge)</string></property>
-                <property name="styleSheet"><string notr="true">background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #f97316, stop:1 #ea580c);</string></property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QPushButton" name="btnTriggerAuto">
-                <property name="cursor"><cursorShape>PointingHandCursor</cursorShape></property>
-                <property name="text"><string>⚡ Déclencher Automatiquement (Capteur)</string></property>
-                <property name="styleSheet"><string notr="true">background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #7c3aed, stop:1 #6d28d9);</string></property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QPushButton" name="btnViderChamps">
-                <property name="cursor"><cursorShape>PointingHandCursor</cursorShape></property>
-                <property name="text"><string>🔄 Réinitialiser le Formulaire</string></property>
-                <property name="styleSheet"><string notr="true">background: #f1f5f9; color: #334155; border: 1px solid #cbd5e1;</string></property>
-               </widget>
-              </item>
-             </layout>
+                </widget>
+               </item>
+              </layout>
+             </widget>
             </widget>
            </item>
            <!-- RIGHT: TABLEAU, RECHERCHE & EXPORTS -->
@@ -623,14 +746,14 @@
                <item>
                 <widget class="QPushButton" name="btnTriSeverite">
                  <property name="cursor"><cursorShape>PointingHandCursor</cursorShape></property>
-                 <property name="text"><string>🚨 Trier par Sévérité (Rouge ➔ Jaune)</string></property>
+                 <property name="text"><string>🚨 Trier par Sévérité</string></property>
                  <property name="styleSheet"><string notr="true">background: #0284c7;</string></property>
                 </widget>
                </item>
                <item>
                 <widget class="QPushButton" name="btnTriDate">
                  <property name="cursor"><cursorShape>PointingHandCursor</cursorShape></property>
-                 <property name="text"><string>📅 Trier par Date (Plus Récente)</string></property>
+                 <property name="text"><string>📅 Plus Récente</string></property>
                  <property name="styleSheet"><string notr="true">background: #0369a1;</string></property>
                 </widget>
                </item>
@@ -650,7 +773,7 @@
                <item>
                 <widget class="QPushButton" name="btnExportPDF">
                  <property name="cursor"><cursorShape>PointingHandCursor</cursorShape></property>
-                 <property name="text"><string>📄 Exporter PDF Réglementaire</string></property>
+                 <property name="text"><string>📄 Exporter PDF</string></property>
                  <property name="styleSheet"><string notr="true">background: #be123c;</string></property>
                 </widget>
                </item>

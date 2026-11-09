@@ -142,6 +142,47 @@ QGroupBox QLabel {
     font-weight: bold;
 }
 
+/* Support QScrollArea sans bordure parasite */
+QScrollArea {
+    border: none;
+    background: transparent;
+}
+QScrollArea > QWidget > QWidget {
+    background: transparent;
+}
+
+/* Formulaire propre & compact : aération équilibrée et lisibilité maximale */
+#groupFormulaire {
+    background-color: #ffffff;
+    border: 1.5px solid #cbd5e1;
+    border-radius: 10px;
+    margin-top: 10px;
+    padding-top: 18px;
+    padding-bottom: 12px;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+#groupFormulaire QLineEdit,
+#groupFormulaire QDateTimeEdit,
+#groupFormulaire QTextEdit {
+    padding: 6px 9px;
+    font-size: 12px;
+}
+
+#groupFormulaire QComboBox {
+    padding: 5px 9px;
+    min-height: 20px;
+    font-size: 12px;
+}
+
+#groupFormulaire QLabel {
+    font-size: 12px;
+    font-weight: bold;
+    color: #1e293b;
+    margin-bottom: 1px;
+}
+
 /* -------------------------------------------------------------
    5. CHAMPS DE SAISIE & SELECTEURS (QLineEdit, QComboBox, etc.)
    ------------------------------------------------------------- */

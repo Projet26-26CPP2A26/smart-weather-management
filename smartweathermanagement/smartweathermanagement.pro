@@ -32,7 +32,8 @@ RESOURCES += \
 
 DISTFILES += \
     gitignore \
-    style.qss
+    style.qss \
+    schema_employe.sql
 
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
