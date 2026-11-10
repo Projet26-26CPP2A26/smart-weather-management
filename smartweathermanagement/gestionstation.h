@@ -19,6 +19,7 @@ public:
     ~GestionStation();
 
 private slots:
+    // === MODULE STATION : CRUD ===
     void on_btnAjouter_clicked();
     void on_btnModifier_clicked();
     void on_btnSupprimer_clicked();
@@ -26,6 +27,13 @@ private slots:
     void on_searchLineEdit_textChanged(const QString &arg1);
     void on_sortComboBox_currentTextChanged(const QString &arg1);
     void on_tableViewStation_clicked(const QModelIndex &index);
+
+    // === MODULE STATION : METIERS ===
+    void on_btnExportCsv_clicked();
+    void on_btnStats_clicked();
+    void on_btnExportPdf_clicked();
+    void on_btnSuggestion_clicked();
+    void on_btnHeartbeat_clicked();
 
 private:
     Ui::GestionStation *ui;

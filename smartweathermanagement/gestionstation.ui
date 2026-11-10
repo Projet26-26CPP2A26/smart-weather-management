@@ -97,38 +97,67 @@
      </item>
      <item>
       <widget class="QGroupBox" name="groupBox_2">
-       <property name="maximumSize">
-        <size>
-         <width>16777215</width>
-         <height>90</height>
-        </size>
-       </property>
        <property name="title">
         <string>Actions</string>
        </property>
-       <layout class="QHBoxLayout" name="horizontalLayout">
-        <item>
+       <layout class="QGridLayout" name="gridLayout">
+        <item row="0" column="0">
          <widget class="QPushButton" name="btnAjouter">
           <property name="text">
            <string>Ajouter</string>
           </property>
          </widget>
         </item>
-        <item>
+        <item row="0" column="1">
          <widget class="QPushButton" name="btnModifier">
           <property name="text">
            <string>Modifier</string>
           </property>
          </widget>
         </item>
-        <item>
+        <item row="0" column="2">
          <widget class="QPushButton" name="btnSupprimer">
           <property name="text">
            <string>Supprimer</string>
           </property>
          </widget>
         </item>
-        <item>
+        <item row="1" column="0">
+         <widget class="QPushButton" name="btnStats">
+          <property name="text">
+           <string>Statistiques</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="1">
+         <widget class="QPushButton" name="btnExportCsv">
+          <property name="text">
+           <string>Exporter CSV</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="2">
+         <widget class="QPushButton" name="btnExportPdf">
+          <property name="text">
+           <string>Exporter PDF</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="0">
+         <widget class="QPushButton" name="btnSuggestion">
+          <property name="text">
+           <string>Suggestion</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="1">
+         <widget class="QPushButton" name="btnHeartbeat">
+          <property name="text">
+           <string>Heartbeat</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="2">
          <widget class="QPushButton" name="btnAfficher">
           <property name="text">
            <string>Actualiser</string>

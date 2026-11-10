@@ -3,6 +3,7 @@
 
 #include <QString>
 #include <QDate>
+#include <QMap>
 #include <QSqlQuery>
 #include <QSqlQueryModel>
 
@@ -49,11 +50,19 @@ public:
     bool modifier(QString id);
     bool supprimer(QString id);
 
-    // Fonctions avancees (Recherche + Tri)
-    // val = texte a chercher (vide = tout afficher)
+    // Recherche + Tri
     // critere = "Altitude" | "Type" | "Gouvernorat" (vide = pas de tri)
     QSqlQueryModel* rechercher(QString val, QString critere = "");
     QSqlQueryModel* trier(QString critere);
+
+    // Statistiques : champ = "Type" ou "Statut"
+    QMap<QString,int> repartition(const QString &champ);
+    // Nombre de stations actives par gouvernorat
+    QMap<QString,int> stationsActivesParGouvernorat();
+    // Heartbeat Score (0..100)
+    static int calculerScore(const QString &statut, const QDate &dateInstall);
+    // Passe en "En maintenance" les stations dont le score < seuil
+    int appliquerMaintenance(int seuil = 50);
 };
 
 #endif // STATION_H

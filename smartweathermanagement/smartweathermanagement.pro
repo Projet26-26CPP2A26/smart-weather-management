@@ -1,4 +1,4 @@
-QT += core gui widgets sql
+QT += core gui widgets sql charts printsupport
 CONFIG += c++17
 
 # You can make your code fail to compile if it uses deprecated APIs.
@@ -9,11 +9,13 @@ SOURCES += \
     main.cpp \
     smartweather.cpp \
     station.cpp \
+    stationdao.cpp \
     gestionstation.cpp
 
 HEADERS += \
     smartweather.h \
     station.h \
+    stationdao.h \
     gestionstation.h
 
 FORMS += \
