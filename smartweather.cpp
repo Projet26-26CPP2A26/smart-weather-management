@@ -5,6 +5,7 @@
 #include "relevewindow.h"
 #include "maintenancewindow.h"
 #include "localdb.h"
+#include "dbcompat.h"
 #include <QCalendarWidget>
 #include <QCoreApplication>
 #include <QDir>
@@ -780,9 +781,10 @@ void smartweather::rafraichirDashboard()
     m_ringRegionale->setValue(pct(regionale), sur(regionale));
 
     QVector<QPair<QString, double>> annees;
-    QSqlQuery qa("SELECT SUBSTR(date_recrutement,1,4), COUNT(*) FROM employe "
-                 "WHERE date_recrutement IS NOT NULL GROUP BY SUBSTR(date_recrutement,1,4) "
-                 "ORDER BY SUBSTR(date_recrutement,1,4)");
+    const QString anneeExpr = DbCompat::dateExpr("date_recrutement", "YYYY");
+    QSqlQuery qa("SELECT " + anneeExpr + ", COUNT(*) FROM employe "
+                 "WHERE date_recrutement IS NOT NULL GROUP BY " + anneeExpr +
+                 " ORDER BY " + anneeExpr);
     while (qa.next()) annees.append({qa.value(0).toString(), qa.value(1).toDouble()});
     while (annees.size() > 8) annees.removeFirst();
     m_courbe->setData(annees);
@@ -796,7 +798,7 @@ void smartweather::rafraichirDashboard()
     QString html;
     QSqlQuery qr("SELECT nom, prenom, poste, date_recrutement FROM employe ORDER BY id_employe DESC");
     for (int n = 0; n < 6 && qr.next(); ++n) {
-        const QDate d = QDate::fromString(qr.value(3).toString(), "yyyy-MM-dd");
+        const QDate d = QDate::fromString(qr.value(3).toString().left(10), "yyyy-MM-dd");
         html += QString("<p style='margin:0 0 9px 0;'><b>%1 %2</b><br>"
                         "<span style='color:#78909C;'>%3 • %4</span></p>")
                     .arg(qr.value(0).toString().toHtmlEscaped(), qr.value(1).toString().toHtmlEscaped(),
