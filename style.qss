@@ -1,0 +1,330 @@
+/* ===================================================================
+   SMART WEATHER MANAGEMENT - FEUILLE DE STYLE HAUTE LISIBILITE (DAYLIGHT CLEAR)
+   Optimisée pour une clarté maximale, un contraste fort et une lecture aisée
+   =================================================================== */
+
+/* -------------------------------------------------------------
+   1. FENETRE PRINCIPALE & FOND GLOBAL
+   ------------------------------------------------------------- */
+QMainWindow, QDialog, QWidget {
+    background-color: #f8fafc;
+    color: #0f172a;
+    font-family: "Segoe UI", Arial, Helvetica, sans-serif;
+    font-size: 13px;
+}
+
+/* -------------------------------------------------------------
+   2. LABELS & TYPOGRAPHIE
+   ------------------------------------------------------------- */
+QLabel {
+    color: #0f172a;
+    font-size: 13px;
+    background: transparent;
+}
+
+/* -------------------------------------------------------------
+   3. BARRE LATERALE (SIDEBAR) & NAVIGATION
+   ------------------------------------------------------------- */
+#sidebarFrame {
+    background-color: #ffffff;
+    border-right: 2px solid #cbd5e1;
+    min-width: 240px;
+    max-width: 260px;
+}
+
+#sidebarFrame QLabel {
+    color: #0f172a;
+}
+
+#lblAppTitle {
+    color: #0284c7;
+    font-size: 19px;
+    font-weight: 800;
+    letter-spacing: 1px;
+}
+
+#lblModule {
+    color: #334155;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+#lblUserBadge {
+    color: #0f172a;
+    font-size: 13px;
+    font-weight: bold;
+}
+
+#lblRoleBadge {
+    color: #0284c7;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+/* Boutons de navigation latérale */
+QPushButton#btnNavDashboard, QPushButton#btnNavAlertes,
+QPushButton#btnNavStats, QPushButton#btnNavPrediction {
+    background-color: transparent;
+    color: #1e293b;
+    border: none;
+    border-radius: 8px;
+    text-align: left;
+    padding: 13px 18px;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+QPushButton#btnNavDashboard:hover, QPushButton#btnNavAlertes:hover,
+QPushButton#btnNavStats:hover, QPushButton#btnNavPrediction:hover {
+    background-color: #e0f2fe;
+    color: #0284c7;
+}
+
+QPushButton#btnNavDashboard:checked, QPushButton#btnNavAlertes:checked,
+QPushButton#btnNavStats:checked, QPushButton#btnNavPrediction:checked {
+    background: qlineargradient(x1:0, y1:0, x2:1, y2:0, stop:0 #0284c7, stop:1 #0369a1);
+    color: #ffffff;
+    font-weight: bold;
+    border-left: 5px solid #0ea5e9;
+}
+
+#lblDigitalClock {
+    background-color: #ffffff;
+    border: 1.5px solid #94a3b8;
+    border-radius: 6px;
+    padding: 7px;
+    color: #0284c7;
+    font-family: Consolas, monospace;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+/* -------------------------------------------------------------
+   4. GROUPBOX ET CADRES CARTES (CARDS)
+   ------------------------------------------------------------- */
+QGroupBox {
+    font-weight: bold;
+    font-size: 13px;
+    border: 1.5px solid #cbd5e1;
+    border-radius: 10px;
+    margin-top: 16px;
+    padding-top: 22px;
+    padding-left: 14px;
+    padding-right: 14px;
+    padding-bottom: 14px;
+    background-color: #ffffff;
+    color: #0f172a;
+}
+
+QGroupBox::title {
+    subcontrol-origin: margin;
+    subcontrol-position: top left;
+    left: 16px;
+    padding: 3px 12px;
+    color: #0284c7;
+    background-color: #ffffff;
+    border: 1.5px solid #0284c7;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: bold;
+}
+
+QFrame.card, QFrame#userCardFrame, QFrame#dashActionsFrame {
+    background-color: #ffffff;
+    border: 1.5px solid #cbd5e1;
+    border-radius: 10px;
+}
+
+/* Labels de formulaire */
+QGroupBox QLabel {
+    color: #0f172a;
+    font-size: 13px;
+    font-weight: bold;
+}
+
+/* -------------------------------------------------------------
+   5. CHAMPS DE SAISIE & SELECTEURS (QLineEdit, QComboBox, etc.)
+   ------------------------------------------------------------- */
+QLineEdit, QDateTimeEdit, QSpinBox, QDoubleSpinBox, QTextEdit {
+    background-color: #ffffff;
+    border: 1.5px solid #94a3b8;
+    border-radius: 6px;
+    padding: 8px 12px;
+    color: #0f172a;
+    font-size: 13px;
+    font-weight: 500;
+    selection-background-color: #bae6fd;
+    selection-color: #0369a1;
+}
+
+QLineEdit:focus, QDateTimeEdit:focus, QSpinBox:focus, QDoubleSpinBox:focus, QTextEdit:focus {
+    border: 2px solid #0284c7;
+    background-color: #ffffff;
+    color: #0f172a;
+}
+
+QComboBox {
+    background-color: #ffffff;
+    border: 1.5px solid #94a3b8;
+    border-radius: 6px;
+    padding: 8px 12px;
+    color: #0f172a;
+    font-size: 13px;
+    font-weight: 500;
+    min-height: 22px;
+}
+
+QComboBox:focus, QComboBox:on {
+    border: 2px solid #0284c7;
+}
+
+QComboBox::drop-down {
+    subcontrol-origin: padding;
+    subcontrol-position: top right;
+    width: 26px;
+    border-left: 1.5px solid #cbd5e1;
+}
+
+QComboBox QAbstractItemView {
+    background-color: #ffffff;
+    color: #0f172a;
+    border: 1.5px solid #0284c7;
+    selection-background-color: #0284c7;
+    selection-color: #ffffff;
+    padding: 6px;
+    font-size: 13px;
+}
+
+/* -------------------------------------------------------------
+   6. BOUTONS D'ACTION
+   ------------------------------------------------------------- */
+QPushButton {
+    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #0284c7, stop:1 #0369a1);
+    color: #ffffff;
+    border: 1px solid #0284c7;
+    border-radius: 7px;
+    padding: 9px 18px;
+    font-size: 13px;
+    font-weight: bold;
+}
+
+QPushButton:hover {
+    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #0ea5e9, stop:1 #0284c7);
+    border-color: #0ea5e9;
+}
+
+QPushButton:pressed {
+    background: #0369a1;
+}
+
+QPushButton:disabled {
+    background-color: #e2e8f0;
+    border-color: #cbd5e1;
+    color: #64748b;
+}
+
+QPushButton#btnSwitchRole {
+    background-color: #f1f5f9;
+    border: 1.5px solid #94a3b8;
+    color: #0f172a;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+QPushButton#btnSwitchRole:hover {
+    background-color: #e2e8f0;
+    color: #0284c7;
+    border-color: #0284c7;
+}
+
+/* -------------------------------------------------------------
+   7. TABLEAU DE DONNEES (QTableView) - HAUTE LISIBILITE
+   ------------------------------------------------------------- */
+QTableView {
+    background-color: #ffffff;
+    alternate-background-color: #f8fafc;
+    border: 1.5px solid #cbd5e1;
+    border-radius: 8px;
+    gridline-color: #e2e8f0;
+    selection-background-color: #dbeafe;
+    selection-color: #1e3a8a;
+    color: #0f172a;
+    font-size: 13px;
+    font-weight: 500;
+}
+
+QTableView::item {
+    padding: 8px 10px;
+    border-bottom: 1px solid #e2e8f0;
+    color: #0f172a;
+}
+
+QTableView::item:selected {
+    background-color: #dbeafe;
+    color: #1e3a8a;
+    font-weight: bold;
+}
+
+QHeaderView::section {
+    background-color: #e2e8f0;
+    color: #0f172a;
+    font-weight: 800;
+    font-size: 12px;
+    padding: 10px 8px;
+    border: none;
+    border-right: 1px solid #cbd5e1;
+    border-bottom: 3px solid #0284c7;
+}
+
+/* -------------------------------------------------------------
+   8. SLIDERS INTERACTIFS
+   ------------------------------------------------------------- */
+QSlider::groove:horizontal {
+    border: 1.5px solid #94a3b8;
+    height: 10px;
+    background: #e2e8f0;
+    border-radius: 5px;
+}
+
+QSlider::sub-page:horizontal {
+    background: qlineargradient(x1:0, y1:0, x2:1, y2:0, stop:0 #0284c7, stop:1 #38bdf8);
+    border-radius: 5px;
+}
+
+QSlider::handle:horizontal {
+    background: #ffffff;
+    border: 2.5px solid #0284c7;
+    width: 20px;
+    margin-top: -6px;
+    margin-bottom: -6px;
+    border-radius: 10px;
+}
+
+QSlider::handle:horizontal:hover {
+    background: #e0f2fe;
+    border: 2.5px solid #0369a1;
+}
+
+/* -------------------------------------------------------------
+   9. BARRES DE DEFILEMENT (QScrollBar)
+   ------------------------------------------------------------- */
+QScrollBar:vertical {
+    border: none;
+    background: #f1f5f9;
+    width: 10px;
+    margin: 0;
+}
+
+QScrollBar::handle:vertical {
+    background: #94a3b8;
+    min-height: 25px;
+    border-radius: 5px;
+}
+
+QScrollBar::handle:vertical:hover {
+    background: #64748b;
+}
+
+QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical {
+    height: 0px;
+}

@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>LoginDialog</class>
+ <widget class="QDialog" name="LoginDialog">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>540</width>
+    <height>520</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>SWM - Connexion &amp; Choix du Rôle</string>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">
+    QDialog {
+        background-color: #ffffff;
+        color: #0f172a;
+        font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+    QLabel {
+        color: #334155;
+    }
+    QLineEdit {
+        background-color: #ffffff;
+        border: 1.5px solid #cbd5e1;
+        border-radius: 8px;
+        padding: 10px;
+        color: #0f172a;
+        font-size: 13px;
+    }
+    QLineEdit:focus {
+        border: 1.5px solid #0284c7;
+    }
+    QPushButton {
+        border-radius: 8px;
+        padding: 10px 16px;
+        font-size: 13px;
+        font-weight: bold;
+    }
+    QPushButton#btnLogin {
+        background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #0284c7, stop:1 #0369a1);
+        color: #ffffff;
+        border: none;
+    }
+    QPushButton#btnLogin:hover {
+        background: #0369a1;
+    }
+   </string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <property name="spacing">
+    <number>16</number>
+   </property>
+   <property name="leftMargin">
+    <number>30</number>
+   </property>
+   <property name="topMargin">
+    <number>25</number>
+   </property>
+   <property name="rightMargin">
+    <number>30</number>
+   </property>
+   <property name="bottomMargin">
+    <number>25</number>
+   </property>
+   <item>
+    <widget class="QLabel" name="lblHeaderTitle">
+     <property name="text">
+      <string>SMART WEATHER MANAGEMENT</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignCenter</set>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">font-size: 20px; font-weight: bold; color: #0284c7; letter-spacing: 1px;</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QLabel" name="lblHeaderSub">
+     <property name="text">
+      <string>Module 4 : Gestion des Alertes &amp; Prédictions</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignCenter</set>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">font-size: 13px; color: #64748b;</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QFrame" name="lineSep">
+     <property name="frameShape">
+      <enum>QFrame::HLine</enum>
+     </property>
+     <property name="frameShadow">
+      <enum>QFrame::Sunken</enum>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">color: #e2e8f0;</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QLabel" name="lblRoleSection">
+     <property name="text">
+      <string>Sélectionnez un rôle pour tester :</string>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">font-weight: bold; font-size: 13px; color: #0f172a;</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QPushButton" name="btnRoleVigilance">
+     <property name="text">
+      <string>👤 Responsable de la vigilance (Tous droits)</string>
+     </property>
+     <property name="cursor">
+      <cursorShape>PointingHandCursor</cursorShape>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">
+        background-color: #f0f9ff;
+        color: #0284c7;
+        border: 2px solid #0284c7;
+        text-align: left;
+        padding: 12px;
+      </string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QPushButton" name="btnRoleProtection">
+     <property name="text">
+      <string>🛡️ Protection civile (Consultation uniquement)</string>
+     </property>
+     <property name="cursor">
+      <cursorShape>PointingHandCursor</cursorShape>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">
+        background-color: #ffffff;
+        color: #ea580c;
+        border: 1px solid #fed7aa;
+        text-align: left;
+        padding: 12px;
+      </string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QPushButton" name="btnRoleDecideur">
+     <property name="text">
+      <string>🏛️ Décideur institutionnel (Analyses &amp; Rapports)</string>
+     </property>
+     <property name="cursor">
+      <cursorShape>PointingHandCursor</cursorShape>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">
+        background-color: #ffffff;
+        color: #9333ea;
+        border: 1px solid #e9d5ff;
+        text-align: left;
+        padding: 12px;
+      </string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QLabel" name="lblUser">
+     <property name="text">
+      <string>Nom d'utilisateur / Matricule :</string>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">font-size: 12px; color: #475569; margin-top: 8px;</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QLineEdit" name="txtUsername">
+     <property name="placeholderText">
+      <string>Identifiant agent</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QLabel" name="lblPass">
+     <property name="text">
+      <string>Mot de passe :</string>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">font-size: 12px; color: #475569;</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QLineEdit" name="txtPassword">
+     <property name="echoMode">
+      <enum>QLineEdit::Password</enum>
+     </property>
+     <property name="placeholderText">
+      <string>Mot de passe</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QPushButton" name="btnLogin">
+     <property name="cursor">
+      <cursorShape>PointingHandCursor</cursorShape>
+     </property>
+     <property name="text">
+      <string>Accéder au Module ➔</string>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
