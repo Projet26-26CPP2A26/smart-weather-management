@@ -1,7 +1,9 @@
 #include "interventiondialog.h"
 
 #include <QComboBox>
+#include <QDate>
 #include <QDateEdit>
+#include <QDateTime>
 #include <QDialogButtonBox>
 #include <QDoubleSpinBox>
 #include <QFormLayout>
@@ -122,29 +124,47 @@ void InterventionDialog::accept()
 
     QSqlQuery q;
     if (m_id == 0) {
+        // ID calcule en SQL : fonctionne sur Oracle (sans dependre de la
+        // sequence) comme sur la base SQLite locale.
+        int nouvelId = 1;
+        QSqlQuery idq("SELECT COALESCE(MAX(ID_INTERVENTION), 0) + 1 FROM INTERVENTION");
+        if (idq.next()) nouvelId = idq.value(0).toInt();
+
         q.prepare("INSERT INTO INTERVENTION (ID_INTERVENTION, ID_STATION, ID_EMPLOYE, TYPE_INTERVENTION, "
                   "PRIORITE, DATE_CREATION, DATE_PLANIFIEE, DATE_CLOTURE, STATUT, COUT, RAPPORT_INTERVENTION) "
-                  "VALUES (SEQ_INTERVENTION.NEXTVAL, ?, ?, ?, ?, SYSDATE, ?, "
-                  "CASE WHEN ? = 'Terminée' THEN SYSDATE ELSE NULL END, ?, ?, ?)");
+                  "VALUES (?, ?, ?, ?, ?, ?, ?, CASE WHEN ? = 'Terminée' THEN ? ELSE NULL END, ?, ?, ?)");
+        q.addBindValue(nouvelId);
+        q.addBindValue(cbStation->currentData());
+        q.addBindValue(cbEmploye->currentData());
+        q.addBindValue(cbType->currentText());
+        q.addBindValue(cbPriorite->currentText());
+        q.addBindValue(QDateTime::currentDateTime());   // DATE_CREATION
+        q.addBindValue(dePlan->date());
+        q.addBindValue(cbStatut->currentText());        // condition du CASE
+        q.addBindValue(QDateTime::currentDateTime());   // DATE_CLOTURE si Terminée
+        q.addBindValue(cbStatut->currentText());
+        q.addBindValue(spCout->value());
+        q.addBindValue(teRapport->toPlainText());
     } else {
         q.prepare("UPDATE INTERVENTION SET ID_STATION=?, ID_EMPLOYE=?, TYPE_INTERVENTION=?, PRIORITE=?, "
                   "DATE_PLANIFIEE=?, "
-                  "DATE_CLOTURE = CASE WHEN ? = 'Terminée' THEN NVL(DATE_CLOTURE, SYSDATE) ELSE NULL END, "
+                  "DATE_CLOTURE = CASE WHEN ? = 'Terminée' THEN COALESCE(DATE_CLOTURE, ?) ELSE NULL END, "
                   "STATUT=?, COUT=?, RAPPORT_INTERVENTION=? WHERE ID_INTERVENTION=?");
+        q.addBindValue(cbStation->currentData());
+        q.addBindValue(cbEmploye->currentData());
+        q.addBindValue(cbType->currentText());
+        q.addBindValue(cbPriorite->currentText());
+        q.addBindValue(dePlan->date());
+        q.addBindValue(cbStatut->currentText());        // condition du CASE
+        q.addBindValue(QDateTime::currentDateTime());
+        q.addBindValue(cbStatut->currentText());
+        q.addBindValue(spCout->value());
+        q.addBindValue(teRapport->toPlainText());
+        q.addBindValue(m_id);
     }
-    q.addBindValue(cbStation->currentData());
-    q.addBindValue(cbEmploye->currentData());
-    q.addBindValue(cbType->currentText());
-    q.addBindValue(cbPriorite->currentText());
-    q.addBindValue(dePlan->dateTime());
-    q.addBindValue(cbStatut->currentText());   // pour le CASE
-    q.addBindValue(cbStatut->currentText());
-    q.addBindValue(spCout->value());
-    q.addBindValue(teRapport->toPlainText());
-    if (m_id) q.addBindValue(m_id);
 
     if (!q.exec()) {
-        QMessageBox::critical(this, "Erreur Oracle", q.lastError().text());
+        QMessageBox::critical(this, "Erreur base de données", q.lastError().text());
         return;
     }
     QDialog::accept();

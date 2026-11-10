@@ -1,5 +1,6 @@
 #include "mainwindow.h"
 #include "interventiondialog.h"
+#include "database.h"
 
 #include <QApplication>
 #include <QChart>
@@ -215,6 +216,10 @@ QWidget *MainWindow::buildStatsTab()
     m_chartsLayout = new QGridLayout(w);
     m_chartsLayout->setContentsMargins(0, 8, 0, 0);
     m_chartsLayout->setSpacing(14);
+    m_chartsLayout->setColumnStretch(0, 1);
+    m_chartsLayout->setColumnStretch(1, 1);
+    m_chartsLayout->setRowStretch(0, 3);
+    m_chartsLayout->setRowStretch(1, 2);
     return w;
 }
 
@@ -260,7 +265,7 @@ void MainWindow::reload()
         "JOIN EMPLOYE e ON e.ID_EMPLOYE = i.ID_EMPLOYE " + where + " ORDER BY " + order);
 
     if (m_model->lastError().isValid()) {
-        QMessageBox::critical(this, "Erreur Oracle", m_model->lastError().text());
+        QMessageBox::critical(this, "Erreur base de données", m_model->lastError().text());
         return;
     }
 
@@ -285,8 +290,13 @@ void MainWindow::reload()
     m_kpiLate->setText(QString::number(late));
     m_kpiCost->setText(QString::number(cost, 'f', 2) + " DT");
 
-    QSqlQuery q("SELECT AVG(DATE_CLOTURE - DATE_CREATION) FROM INTERVENTION "
-                "WHERE DATE_CLOTURE IS NOT NULL AND ARCHIVE = 0");
+    // Delai moyen en jours : soustraction de dates sur Oracle, julianday sur SQLite.
+    const QString sqlMoyenne = Database::isSqlite()
+        ? "SELECT AVG(julianday(DATE_CLOTURE) - julianday(DATE_CREATION)) FROM INTERVENTION "
+          "WHERE DATE_CLOTURE IS NOT NULL AND ARCHIVE = 0"
+        : "SELECT AVG(DATE_CLOTURE - DATE_CREATION) FROM INTERVENTION "
+          "WHERE DATE_CLOTURE IS NOT NULL AND ARCHIVE = 0";
+    QSqlQuery q(sqlMoyenne);
     m_kpiAvg->setText(q.next() && !q.value(0).isNull()
                           ? QString::number(q.value(0).toDouble(), 'f', 1) + " jours" : "–");
 
@@ -320,7 +330,7 @@ void MainWindow::deleteIntervention()
     QSqlQuery q;
     q.prepare("DELETE FROM INTERVENTION WHERE ID_INTERVENTION = ?");
     q.addBindValue(id);
-    if (!q.exec()) QMessageBox::critical(this, "Erreur Oracle", q.lastError().text());
+    if (!q.exec()) QMessageBox::critical(this, "Erreur base de données", q.lastError().text());
     reload();
 }
 
@@ -331,7 +341,7 @@ void MainWindow::archiveIntervention()
     QSqlQuery q;
     q.prepare("UPDATE INTERVENTION SET ARCHIVE = 1 WHERE ID_INTERVENTION = ?");
     q.addBindValue(id);
-    if (!q.exec()) QMessageBox::critical(this, "Erreur Oracle", q.lastError().text());
+    if (!q.exec()) QMessageBox::critical(this, "Erreur base de données", q.lastError().text());
     reload();
 }
 
@@ -472,6 +482,7 @@ void MainWindow::predictivePlanning()
     tw->setHorizontalHeaderLabels({"Station", "Score", "Priorité suggérée", "Date suggérée"});
     tw->setEditTriggers(QAbstractItemView::NoEditTriggers);
     tw->setSelectionBehavior(QAbstractItemView::SelectRows);
+    tw->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
     tw->horizontalHeader()->setStretchLastSection(true);
     tw->verticalHeader()->hide();
     v->addWidget(tw);
@@ -525,6 +536,7 @@ static QChartView *pieChart(const QString &title, const QString &sql)
     chart->setAnimationOptions(QChart::SeriesAnimations);
     auto *view = new QChartView(chart);
     view->setRenderHint(QPainter::Antialiasing);
+    view->setMinimumSize(380, 260);
     return view;
 }
 
@@ -543,7 +555,7 @@ void MainWindow::refreshStats()
     // Cout de maintenance par gouvernorat (histogramme)
     auto *set = new QBarSet("Coût (DT)");
     QStringList cats;
-    QSqlQuery q("SELECT s.GOUVERNORAT, NVL(SUM(i.COUT),0) FROM INTERVENTION i "
+    QSqlQuery q("SELECT s.GOUVERNORAT, COALESCE(SUM(i.COUT),0) FROM INTERVENTION i "
                 "JOIN STATION s ON s.ID_STATION = i.ID_STATION WHERE i.ARCHIVE=0 "
                 "GROUP BY s.GOUVERNORAT ORDER BY 2 DESC");
     double maxv = 1;
@@ -571,5 +583,6 @@ void MainWindow::refreshStats()
     chart->setAnimationOptions(QChart::SeriesAnimations);
     auto *view = new QChartView(chart);
     view->setRenderHint(QPainter::Antialiasing);
+    view->setMinimumSize(380, 200);
     m_chartsLayout->addWidget(view, 1, 0, 1, 2);
 }
