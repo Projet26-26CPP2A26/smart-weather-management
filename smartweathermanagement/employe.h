@@ -5,6 +5,7 @@
 #include <QDate>
 #include <QSqlQuery>
 #include <QSqlQueryModel>
+#include <QImage>
 
 class Employe {
 private:
@@ -58,11 +59,22 @@ public:
     // Méthodes Métier (Exports & Rapports)
     static bool exporterListePDF(const QString &cheminFichier, const QString &editeur = "Responsable RH");
     static bool exporterFichePDF(const QString &id, const QString &cheminFichier, const QString &editeur = "Responsable RH");
+    static bool exporterAttestationPDF(const QString &id, const QString &cheminFichier, const QString &editeur = "Direction des Ressources Humaines");
+    static bool exporterStatsPDF(const QString &cheminFichier, const QString &editeur = "Direction des Ressources Humaines");
 
-    // Méthodes Métier (Recherche & Tri)
+    // Méthodes Métier (Badge Sécurisé & QR Code)
+    static QImage genererQrCode(const QString &texte, int taille = 240);
+    static QImage genererBadgeImage(const QString &id);
+    static bool exporterBadgePDF(const QString &id, const QString &cheminFichier);
+
+    // Méthodes Métier (Recherche & Tri Avancés)
     static QSqlQueryModel* trier(const QString &critere, const QString &ordre = "ASC");
-    static QSqlQueryModel* rechercher(const QString &texte, const QString &critere = "Nom", const QString &tri = "Nom");
+    static QSqlQueryModel* rechercher(const QString &texte, const QString &critere = "Nom", const QString &tri = "Nom", const QString &ordre = "ASC");
     static bool existe(const QString &id);
+
+    // Méthodes Métier (Journal d'audit & Traçabilité RH)
+    static bool logAction(const QString &action, const QString &details, const QString &utilisateur = "admin");
+    static QSqlQueryModel* afficherLogs();
 };
 
 #endif // EMPLOYE_H

@@ -74,7 +74,36 @@ VALUES ('108', 'Ayari', 'Mohamed', 'mohamed.ayari@inm.tn', 'Technicien de mainte
 
 COMMIT;
 
--- 6. REQUÊTES DE VALIDATION POUR LA SÉANCE D'ÉVALUATION S8
+-- 6. TABLE POUR LE JOURNAL D'AUDIT ET TRAÇABILITÉ DES ACTIONS RH (SEMAINE 9 : MÉTIERS)
+DROP TABLE HISTORIQUE_RH CASCADE CONSTRAINTS;
+DROP SEQUENCE seq_historique_rh;
+
+CREATE TABLE HISTORIQUE_RH (
+    id_log       NUMBER,
+    date_action  VARCHAR2(30)  NOT NULL,
+    utilisateur  VARCHAR2(50)  NOT NULL,
+    action       VARCHAR2(100) NOT NULL,
+    details      VARCHAR2(255) NOT NULL,
+    CONSTRAINT pk_historique_rh PRIMARY KEY (id_log)
+);
+
+CREATE SEQUENCE seq_historique_rh START WITH 1 INCREMENT BY 1 NOCACHE;
+
+CREATE OR REPLACE TRIGGER trg_historique_rh_id
+BEFORE INSERT ON HISTORIQUE_RH
+FOR EACH ROW
+BEGIN
+    IF :NEW.id_log IS NULL THEN
+        SELECT seq_historique_rh.NEXTVAL INTO :NEW.id_log FROM DUAL;
+    END IF;
+END;
+/
+
+INSERT INTO HISTORIQUE_RH (date_action, utilisateur, action, details)
+VALUES (TO_CHAR(SYSDATE, 'YYYY-MM-DD HH24:MI:SS'), 'admin', 'Initialisation Système', 'Validation du registre du personnel INM - Module Employés');
+COMMIT;
+
+-- 7. REQUÊTES DE VALIDATION POUR LES SÉANCES D'ÉVALUATION S8 & S9
 -- Affichage de l'ensemble du personnel
 SELECT * FROM EMPLOYE ORDER BY id_employe ASC;
 
@@ -83,3 +112,6 @@ SELECT poste, COUNT(*) AS effectif FROM EMPLOYE GROUP BY poste ORDER BY effectif
 
 -- Répartition par structure opérationnelle
 SELECT structure, COUNT(*) AS effectif FROM EMPLOYE GROUP BY structure;
+
+-- Consultation du journal d'audit RH
+SELECT * FROM HISTORIQUE_RH ORDER BY id_log DESC;

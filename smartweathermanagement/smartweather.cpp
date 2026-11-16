@@ -981,21 +981,43 @@ QWidget *smartweather::buildEmployesPage()
     formCard->setFixedWidth(370);
 
     m_critere = new QComboBox;
-    m_critere->addItems({"Tous", "Nom", "Poste", "Structure", "Gouvernorat", "ID"});
+    m_critere->addItems({"Tous", "Nom", "Prénom", "Poste", "Structure", "Gouvernorat", "ID", "Email", "Statut"});
     m_recherche = new QLineEdit;
-    m_recherche->setPlaceholderText("Rechercher un employé (Nom, Poste, Région...)...");
-    m_tri = new QComboBox;
-    m_tri->addItems({"Nom", "Poste", "Date de recrutement", "Structure", "Gouvernorat", "ID"});
+    m_recherche->setPlaceholderText("Rechercher un employé (Nom, Prénom, Poste, Région, Email...)...");
 
-    auto *btnPlanning = new QPushButton("📅 Planning Veille 24h");
+    m_btnClearRecherche = new QPushButton("✕");
+    m_btnClearRecherche->setToolTip("Effacer la recherche");
+    m_btnClearRecherche->setFixedSize(30, 30);
+    m_btnClearRecherche->setObjectName("secondary");
+    m_btnClearRecherche->setCursor(Qt::PointingHandCursor);
+
+    m_tri = new QComboBox;
+    m_tri->addItems({"Nom", "Prénom", "Date de recrutement", "Poste", "Structure", "Gouvernorat", "ID", "Statut"});
+
+    m_btnOrdreTri = new QPushButton("🔼 Croissant");
+    m_btnOrdreTri->setToolTip("Inverser l'ordre de tri (Croissant / Décroissant)");
+    m_btnOrdreTri->setObjectName("secondary");
+    m_btnOrdreTri->setCursor(Qt::PointingHandCursor);
+
+    m_lblNbResultats = new QLabel("Chargement des effectifs...");
+    m_lblNbResultats->setStyleSheet("font-size: 10pt; color: #64748B; font-weight: bold; margin-left: 2px;");
+
+    auto *btnPlanning = new QPushButton("📅 Planning 24h");
     btnPlanning->setObjectName("innovant");
     btnPlanning->setToolTip("Génération automatique du planning des gardes 24h/24 équilibré");
 
-    auto *btnAffectation = new QPushButton("🛠 Affectation Technicien");
+    auto *btnAffectation = new QPushButton("🛠 Affectation Tech");
     btnAffectation->setObjectName("innovant");
     btnAffectation->setToolTip("Affectation intelligente de techniciens selon proximité géographique");
 
-    auto *btnCsv = new QPushButton("📊 Excel (CSV)");
+    auto *btnBadge = new QPushButton("🪪 Badge QR");
+    btnBadge->setObjectName("innovant");
+    btnBadge->setToolTip("Génération de la carte d'accès avec QR Code sécurisé");
+
+    auto *btnAttestation = new QPushButton("📜 Attestation");
+    btnAttestation->setToolTip("Délivrer une attestation de travail officielle certifiée avec QR Code");
+
+    auto *btnCsv = new QPushButton("📊 Excel CSV");
     btnCsv->setObjectName("secondary");
 
     auto *btnPdf = new QPushButton("📄 Exporter PDF");
@@ -1004,30 +1026,43 @@ QWidget *smartweather::buildEmployesPage()
     auto *btnStats = new QPushButton("📈 Statistiques");
     btnStats->setObjectName("secondary");
 
-    for (auto *b : {btnPlanning, btnAffectation, btnCsv, btnPdf, btnStats}) {
+    auto *btnLogs = new QPushButton("📋 Journal RH");
+    btnLogs->setObjectName("secondary");
+    btnLogs->setToolTip("Consulter le journal d'audit et la traçabilité des opérations RH");
+
+    for (auto *b : {btnPlanning, btnAffectation, btnBadge, btnAttestation, btnCsv, btnPdf, btnStats, btnLogs}) {
         b->setCursor(Qt::PointingHandCursor);
     }
 
     auto *titre = new QLabel("Liste des employés");
     titre->setObjectName("cardTitle");
     auto *ligne1 = new QHBoxLayout;
-    ligne1->setSpacing(8);
+    ligne1->setSpacing(6);
     ligne1->addWidget(titre);
     ligne1->addStretch();
     ligne1->addWidget(btnPlanning);
     ligne1->addWidget(btnAffectation);
+    ligne1->addWidget(btnBadge);
+    ligne1->addWidget(btnAttestation);
     ligne1->addWidget(btnCsv);
     ligne1->addWidget(btnPdf);
     ligne1->addWidget(btnStats);
+    ligne1->addWidget(btnLogs);
 
     auto *ligne2 = new QHBoxLayout;
     ligne2->setSpacing(8);
-    ligne2->addWidget(new QLabel("Rechercher par"));
+    ligne2->addWidget(new QLabel("Filtrer par"));
     ligne2->addWidget(m_critere);
     ligne2->addWidget(m_recherche, 1);
+    ligne2->addWidget(m_btnClearRecherche);
     ligne2->addSpacing(10);
     ligne2->addWidget(new QLabel("Trier par"));
     ligne2->addWidget(m_tri);
+    ligne2->addWidget(m_btnOrdreTri);
+
+    auto *ligne3 = new QHBoxLayout;
+    ligne3->addWidget(m_lblNbResultats);
+    ligne3->addStretch();
 
     m_model = new QSqlQueryModel(this);
     m_table = new QTableView;
@@ -1045,9 +1080,10 @@ QWidget *smartweather::buildEmployesPage()
     auto *listW = new QWidget;
     auto *ll = new QVBoxLayout(listW);
     ll->setContentsMargins(0, 0, 0, 0);
-    ll->setSpacing(12);
+    ll->setSpacing(10);
     ll->addLayout(ligne1);
     ll->addLayout(ligne2);
+    ll->addLayout(ligne3);
     ll->addWidget(m_table, 1);
 
     auto *h = new QHBoxLayout(page);
@@ -1063,15 +1099,36 @@ QWidget *smartweather::buildEmployesPage()
     connect(btnVider, &QPushButton::clicked, this, &smartweather::viderFormulaire);
     connect(btnPlanning, &QPushButton::clicked, this, &smartweather::planifierVeille24h);
     connect(btnAffectation, &QPushButton::clicked, this, &smartweather::affecterTechnicien);
+    connect(btnBadge, &QPushButton::clicked, this, &smartweather::genererBadge);
+    connect(btnAttestation, &QPushButton::clicked, this, &smartweather::exporterAttestation);
     connect(btnCsv, &QPushButton::clicked, this, &smartweather::exporterCsv);
     connect(btnPdf, &QPushButton::clicked, this, &smartweather::exporterPdf);
     connect(btnStats, &QPushButton::clicked, this, &smartweather::afficherStats);
+    connect(btnLogs, &QPushButton::clicked, this, &smartweather::afficherLogs);
+
+    connect(m_btnClearRecherche, &QPushButton::clicked, [this]() {
+        m_recherche->clear();
+        m_recherche->setFocus();
+    });
+    connect(m_btnOrdreTri, &QPushButton::clicked, this, &smartweather::changerOrdreTri);
+
     connect(m_recherche, &QLineEdit::textChanged, this, &smartweather::charger);
     connect(m_critere, QOverload<int>::of(&QComboBox::currentIndexChanged),
             this, &smartweather::charger);
     connect(m_tri, QOverload<int>::of(&QComboBox::currentIndexChanged),
             this, &smartweather::charger);
     connect(m_table, &QTableView::clicked, this, &smartweather::remplirFormulaire);
+
+    connect(m_table->horizontalHeader(), &QHeaderView::sectionClicked, [this](int logicalIndex) {
+        if (logicalIndex == C_NOM) m_tri->setCurrentText("Nom");
+        else if (logicalIndex == C_PRENOM) m_tri->setCurrentText("Prénom");
+        else if (logicalIndex == C_POSTE) m_tri->setCurrentText("Poste");
+        else if (logicalIndex == C_STRUCT) m_tri->setCurrentText("Structure");
+        else if (logicalIndex == C_GOUV) m_tri->setCurrentText("Gouvernorat");
+        else if (logicalIndex == C_DATE) m_tri->setCurrentText("Date de recrutement");
+        else if (logicalIndex == C_STATUT) m_tri->setCurrentText("Statut");
+        else if (logicalIndex == C_ID) m_tri->setCurrentText("ID");
+    });
 
     return page;
 }
@@ -1268,6 +1325,7 @@ void smartweather::ajouter()
               m_horaire->currentText());
 
     if (e.ajouter()) {
+        Employe::logAction("Ajout Employé", QString("Création de l'employé #%1 (%2 %3, %4)").arg(id, e.getNom(), e.getPrenom(), e.getPoste()), m_user);
         QMessageBox::information(this, "Succès - Ajout Employé",
                                  QString("L'employé #%1 (%2 %3) a été ajouté avec succès.")
                                      .arg(id, e.getNom(), e.getPrenom()));
@@ -1299,6 +1357,7 @@ void smartweather::modifier()
               m_horaire->currentText());
 
     if (e.modifier()) {
+        Employe::logAction("Modification Employé", QString("Mise à jour de l'employé #%1 (%2 %3)").arg(m_idCourant, e.getNom(), e.getPrenom()), m_user);
         QMessageBox::information(this, "Succès - Modification",
                                  QString("Les informations de l'employé #%1 ont été mises à jour avec succès.")
                                      .arg(m_idCourant));
@@ -1334,6 +1393,7 @@ void smartweather::supprimer()
     } else if (msgBox.clickedButton() == btnSupprimer) {
         Employe e;
         if (e.supprimer(m_idCourant)) {
+            Employe::logAction("Suppression Employé", QString("Suppression définitive de l'employé #%1").arg(m_idCourant), m_user);
             QMessageBox::information(this, "Suppression", QString("L'employé #%1 a été supprimé définitivement.").arg(m_idCourant));
             viderFormulaire();
             charger();
@@ -1348,6 +1408,7 @@ void smartweather::archiverEmploye()
 {
     if (m_idCourant.isEmpty()) return;
     if (Employe::archiver(m_idCourant)) {
+        Employe::logAction("Archivage Employé", QString("Archivage de l'employé #%1").arg(m_idCourant), m_user);
         QMessageBox::information(this, "Archivage", QString("L'employé #%1 a été archivé avec succès (Statut mis à jour en 'Archivé').").arg(m_idCourant));
         viderFormulaire();
         charger();
@@ -1365,9 +1426,9 @@ void smartweather::charger()
 
     QSqlQueryModel *model = nullptr;
     if (!texte.isEmpty()) {
-        model = Employe::rechercher(texte, critere, tri);
+        model = Employe::rechercher(texte, critere, tri, m_ordreTri);
     } else {
-        model = Employe::trier(tri, "ASC");
+        model = Employe::trier(tri, m_ordreTri);
     }
 
     QSqlQueryModel *old = m_model;
@@ -1381,6 +1442,22 @@ void smartweather::charger()
     if (m_table->horizontalHeader()->count() > C_ID) {
         m_table->horizontalHeader()->setSectionResizeMode(C_ID, QHeaderView::ResizeToContents);
     }
+
+    int count = m_model ? m_model->rowCount() : 0;
+    if (!texte.isEmpty()) {
+        m_lblNbResultats->setText(QString("🔍 <b>%1</b> résultat(s) pour « %2 » (Filtre: %3 • Tri: %4 %5)")
+                                      .arg(count).arg(texte).arg(critere).arg(tri, m_ordreTri));
+    } else {
+        m_lblNbResultats->setText(QString("📋 <b>%1</b> employé(s) répertorié(s) (Tri actuel: %2 %3)")
+                                      .arg(count).arg(tri, m_ordreTri));
+    }
+}
+
+void smartweather::changerOrdreTri()
+{
+    m_ordreTri = (m_ordreTri == "ASC") ? "DESC" : "ASC";
+    m_btnOrdreTri->setText(m_ordreTri == "ASC" ? "🔼 Croissant" : "🔽 Décroissant");
+    charger();
 }
 
 void smartweather::remplirFormulaire(const QModelIndex &index)
@@ -1442,6 +1519,7 @@ void smartweather::exporterCsv()
         for (int c = 0; c < cols; ++c)
             out << m_model->data(m_model->index(r, c)).toString() << (c + 1 < cols ? ";" : "\n");
 
+    Employe::logAction("Export CSV", "Exportation du registre complet des employés", m_user);
     QMessageBox::information(this, "Export CSV", "Le registre des employés a été exporté en format CSV avec succès.");
 }
 
@@ -1478,6 +1556,7 @@ void smartweather::exporterPdf()
         if (path.isEmpty()) return;
 
         if (Employe::exporterFichePDF(m_idCourant, path, editeur)) {
+            Employe::logAction("Export PDF Fiche", QString("Export fiche individuelle agent #%1").arg(m_idCourant), editeur);
             QMessageBox::information(this, "Export PDF Réussi", "La fiche individuelle de l'employé a été générée avec succès.");
             QDesktopServices::openUrl(QUrl::fromLocalFile(path));
         } else {
@@ -1489,6 +1568,7 @@ void smartweather::exporterPdf()
         if (path.isEmpty()) return;
 
         if (Employe::exporterListePDF(path, editeur)) {
+            Employe::logAction("Export PDF Registre", "Export du registre complet officiel du personnel", editeur);
             QMessageBox::information(this, "Export PDF Réussi", "Le registre complet du personnel a été exporté avec succès.");
             QDesktopServices::openUrl(QUrl::fromLocalFile(path));
         } else {
@@ -1497,29 +1577,205 @@ void smartweather::exporterPdf()
     }
 }
 
+void smartweather::exporterAttestation()
+{
+    if (m_idCourant.isEmpty()) {
+        QMessageBox::information(this, "Attestation de Travail",
+                                 "Veuillez d'abord sélectionner un employé dans le tableau pour délivrer son attestation officielle de travail.");
+        return;
+    }
+
+    QString defaultName = QString("attestation_travail_inm_%1_%2.pdf").arg(m_idCourant, m_nom->text().toLower());
+    QString path = QFileDialog::getSaveFileName(this, "Délivrer Attestation de Travail Officielle (PDF)", defaultName, "Documents PDF (*.pdf)");
+    if (path.isEmpty()) return;
+
+    QString editeur = m_user.isEmpty() ? "Direction des Ressources Humaines" : m_user;
+    if (Employe::exporterAttestationPDF(m_idCourant, path, editeur)) {
+        Employe::logAction("Délivrance Attestation", QString("Attestation certifiée avec QR Code délivrée pour #%1").arg(m_idCourant), editeur);
+        QMessageBox::information(this, "Attestation Délivrée",
+                                 QString("L'attestation officielle de travail pour l'agent <b>%1 %2</b> (#%3) a été générée avec succès avec son QR Code d'authentification.")
+                                     .arg(m_nom->text(), m_prenom->text(), m_idCourant));
+        QDesktopServices::openUrl(QUrl::fromLocalFile(path));
+    } else {
+        erreur("Erreur lors de la génération de l'attestation officielle.");
+    }
+}
+
+void smartweather::genererBadge()
+{
+    if (m_idCourant.isEmpty()) {
+        QMessageBox::information(this, "Badge Professionnel Sécurisé",
+                                 "Veuillez d'abord sélectionner un employé dans le tableau pour générer son badge d'accès avec QR Code.");
+        return;
+    }
+
+    QImage badge = Employe::genererBadgeImage(m_idCourant);
+    if (badge.isNull()) {
+        erreur("Impossible de charger les données pour générer le badge.");
+        return;
+    }
+
+    auto *dlg = new QDialog(this);
+    dlg->setWindowTitle(QString("Badge Professionnel d'Accès Sécurisé — Agent #%1").arg(m_idCourant));
+    dlg->resize(540, 840);
+
+    auto *lay = new QVBoxLayout(dlg);
+    lay->setSpacing(12);
+    lay->setContentsMargins(18, 18, 18, 18);
+
+    auto *titre = new QLabel(QString("🪪 Carte Professionnelle RFID & QR Code — Agent #%1").arg(m_idCourant));
+    titre->setStyleSheet("font-size:14pt; font-weight:bold; color:#0D47A1;");
+    lay->addWidget(titre);
+
+    auto *lblBadge = new QLabel;
+    lblBadge->setAlignment(Qt::AlignCenter);
+    QPixmap pix = QPixmap::fromImage(badge).scaled(420, 650, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+    lblBadge->setPixmap(pix);
+    lay->addWidget(lblBadge, 1);
+
+    auto *btnRow = new QHBoxLayout;
+    auto *btnPng = new QPushButton("💾 Enregistrer Image (PNG)");
+    auto *btnPdf = new QPushButton("📄 Imprimer Badge (PDF)");
+    auto *btnClose = new QPushButton("Fermer");
+    btnPng->setObjectName("secondary");
+    btnPdf->setObjectName("innovant");
+
+    for (auto *b : {btnPng, btnPdf, btnClose}) b->setCursor(Qt::PointingHandCursor);
+
+    btnRow->addWidget(btnPng);
+    btnRow->addWidget(btnPdf);
+    btnRow->addStretch();
+    btnRow->addWidget(btnClose);
+    lay->addLayout(btnRow);
+
+    connect(btnClose, &QPushButton::clicked, dlg, &QDialog::accept);
+
+    connect(btnPng, &QPushButton::clicked, [this, badge]() {
+        QString defaultName = QString("badge_agent_%1.png").arg(m_idCourant);
+        QString path = QFileDialog::getSaveFileName(this, "Enregistrer le Badge (Image)", defaultName, "Images PNG (*.png)");
+        if (path.isEmpty()) return;
+        if (badge.save(path, "PNG")) {
+            Employe::logAction("Export Badge Image", QString("Badge agent #%1 exporté en PNG").arg(m_idCourant), m_user);
+            QMessageBox::information(this, "Badge Enregistré", "L'image haute résolution du badge a été enregistrée avec succès.");
+            QDesktopServices::openUrl(QUrl::fromLocalFile(path));
+        } else {
+            erreur("Erreur lors de l'enregistrement de l'image du badge.");
+        }
+    });
+
+    connect(btnPdf, &QPushButton::clicked, [this]() {
+        QString defaultName = QString("badge_officiel_agent_%1.pdf").arg(m_idCourant);
+        QString path = QFileDialog::getSaveFileName(this, "Exporter le Badge en PDF", defaultName, "Documents PDF (*.pdf)");
+        if (path.isEmpty()) return;
+        if (Employe::exporterBadgePDF(m_idCourant, path)) {
+            Employe::logAction("Export Badge PDF", QString("Badge agent #%1 exporté en PDF").arg(m_idCourant), m_user);
+            QMessageBox::information(this, "Badge PDF Généré", "Le document PDF prêt pour impression du badge a été généré avec succès.");
+            QDesktopServices::openUrl(QUrl::fromLocalFile(path));
+        } else {
+            erreur("Erreur lors de la génération du PDF du badge.");
+        }
+    });
+
+    Employe::logAction("Consultation Badge", QString("Affichage du badge d'accès sécurisé pour #%1").arg(m_idCourant), m_user);
+    dlg->exec();
+}
+
+void smartweather::afficherLogs()
+{
+    auto *dlg = new QDialog(this);
+    dlg->setWindowTitle("Journal d'Audit et Traçabilité des Opérations RH — INM");
+    dlg->resize(840, 540);
+
+    auto *lay = new QVBoxLayout(dlg);
+    lay->setSpacing(12);
+    lay->setContentsMargins(18, 18, 18, 18);
+
+    auto *titre = new QLabel("📋 Journal d'Audit & Historique des Actions Métier (INM)");
+    titre->setStyleSheet("font-size:15pt; font-weight:bold; color:#1E88E5;");
+    lay->addWidget(titre);
+
+    auto *desc = new QLabel("Traçabilité complète et sécurisée de l'ensemble des opérations effectuées sur le module Gestion des Employés.");
+    desc->setStyleSheet("color:#64748B; font-size:10pt;");
+    lay->addWidget(desc);
+
+    auto *table = new QTableView;
+    auto *model = Employe::afficherLogs();
+    table->setModel(model);
+    table->setSelectionBehavior(QAbstractItemView::SelectRows);
+    table->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    table->setAlternatingRowColors(true);
+    table->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+    table->horizontalHeader()->setSectionResizeMode(0, QHeaderView::ResizeToContents);
+    table->horizontalHeader()->setSectionResizeMode(1, QHeaderView::ResizeToContents);
+    lay->addWidget(table, 1);
+
+    auto *btnRow = new QHBoxLayout;
+    auto *btnCsv = new QPushButton("📊 Exporter Journal (CSV)");
+    auto *btnRefresh = new QPushButton("🔄 Actualiser");
+    auto *btnClose = new QPushButton("Fermer");
+    btnCsv->setObjectName("secondary");
+
+    for (auto *b : {btnCsv, btnRefresh, btnClose}) b->setCursor(Qt::PointingHandCursor);
+
+    btnRow->addWidget(btnCsv);
+    btnRow->addWidget(btnRefresh);
+    btnRow->addStretch();
+    btnRow->addWidget(btnClose);
+    lay->addLayout(btnRow);
+
+    connect(btnClose, &QPushButton::clicked, dlg, &QDialog::accept);
+    connect(btnRefresh, &QPushButton::clicked, [table]() {
+        auto *old = table->model();
+        table->setModel(Employe::afficherLogs());
+        if (old) old->deleteLater();
+        table->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+        table->horizontalHeader()->setSectionResizeMode(0, QHeaderView::ResizeToContents);
+        table->horizontalHeader()->setSectionResizeMode(1, QHeaderView::ResizeToContents);
+    });
+
+    connect(btnCsv, &QPushButton::clicked, [this, model, dlg]() {
+        QString path = QFileDialog::getSaveFileName(dlg, "Exporter Journal RH", "journal_audit_rh.csv", "CSV (*.csv)");
+        if (path.isEmpty()) return;
+        QFile f(path);
+        if (!f.open(QIODevice::WriteOnly | QIODevice::Text)) return;
+        QTextStream out(&f);
+        out << "Date & Heure;Utilisateur;Action;Details\n";
+        for (int r = 0; r < model->rowCount(); ++r) {
+            out << model->data(model->index(r, 0)).toString() << ";"
+                << model->data(model->index(r, 1)).toString() << ";"
+                << model->data(model->index(r, 2)).toString() << ";"
+                << model->data(model->index(r, 3)).toString() << "\n";
+        }
+        QMessageBox::information(dlg, "Export Journal", "Le journal d'audit a été exporté en CSV avec succès.");
+    });
+
+    dlg->exec();
+    model->deleteLater();
+}
+
 void smartweather::afficherStats()
 {
     auto *dlg = new QDialog(this);
     dlg->setWindowTitle("Statistiques Détaillées des Ressources Humaines — INM");
-    dlg->resize(680, 520);
+    dlg->resize(720, 560);
 
     auto *lay = new QVBoxLayout(dlg);
     lay->setSpacing(14);
     lay->setContentsMargins(20, 20, 20, 20);
 
-    auto *titre = new QLabel("📊 Répartition et Indicateurs du Personnel (INM)");
-    titre->setStyleSheet("font-size:16pt; font-weight:bold; color:#1E88E5;");
+    auto *titre = new QLabel("📊 Répartition et Indicateurs Analytiques du Personnel (INM)");
+    titre->setStyleSheet("font-size:15pt; font-weight:bold; color:#1E88E5;");
     lay->addWidget(titre);
 
     auto *tabs = new QTabWidget;
 
-    // Tab 1 : Répartition par Poste
-    auto *wPoste = new QWidget;
-    auto *lPoste = new QVBoxLayout(wPoste);
     QSqlQuery qTotal("SELECT COUNT(*) FROM employe");
     int total = qTotal.next() ? qTotal.value(0).toInt() : 1;
     if (total == 0) total = 1;
 
+    // Tab 1 : Répartition par Poste
+    auto *wPoste = new QWidget;
+    auto *lPoste = new QVBoxLayout(wPoste);
     QSqlQuery qp("SELECT poste, COUNT(*) FROM employe GROUP BY poste ORDER BY COUNT(*) DESC");
     while (qp.next()) {
         QString pNom = qp.value(0).toString();
@@ -1540,7 +1796,7 @@ void smartweather::afficherStats()
         lPoste->addLayout(row);
     }
     lPoste->addStretch();
-    tabs->addTab(wPoste, "Répartition par Poste");
+    tabs->addTab(wPoste, "Postes Métier");
 
     // Tab 2 : Répartition par Structure
     auto *wStruct = new QWidget;
@@ -1567,12 +1823,63 @@ void smartweather::afficherStats()
     lStruct->addStretch();
     tabs->addTab(wStruct, "Structure (Siège vs Régionale)");
 
-    // Tab 3 : Effectifs par Gouvernorat
+    // Tab 3 : Répartition par Régime Horaire
+    auto *wHoraire = new QWidget;
+    auto *lHoraire = new QVBoxLayout(wHoraire);
+    QSqlQuery qh("SELECT type_horaire, COUNT(*) FROM employe GROUP BY type_horaire");
+    while (qh.next()) {
+        QString hNom = qh.value(0).toString();
+        int count = qh.value(1).toInt();
+        int pct = qRound((count * 100.0) / total);
+
+        auto *row = new QHBoxLayout;
+        auto *lbl = new QLabel(QString("<b>%1</b> (%2 agents)").arg(hNom).arg(count));
+        lbl->setFixedWidth(230);
+        auto *bar = new QProgressBar;
+        bar->setRange(0, 100);
+        bar->setValue(pct);
+        bar->setFormat(QString("%1%").arg(pct));
+        QString color = (hNom == "Garde 24h") ? "#7B1FA2" : "#F57C00";
+        bar->setStyleSheet(QString("QProgressBar { border: 1px solid #D5DEE8; border-radius: 6px; text-align: center; height: 18px; }"
+                                   "QProgressBar::chunk { background-color: %1; border-radius: 5px; }").arg(color));
+        row->addWidget(lbl);
+        row->addWidget(bar);
+        lHoraire->addLayout(row);
+    }
+    lHoraire->addStretch();
+    tabs->addTab(wHoraire, "Régime Horaire & Veille");
+
+    // Tab 4 : Répartition par Statut Administratif
+    auto *wStatut = new QWidget;
+    auto *lStatut = new QVBoxLayout(wStatut);
+    QSqlQuery qstat("SELECT statut, COUNT(*) FROM employe GROUP BY statut ORDER BY COUNT(*) DESC");
+    while (qstat.next()) {
+        QString stNom = qstat.value(0).toString();
+        int count = qstat.value(1).toInt();
+        int pct = qRound((count * 100.0) / total);
+
+        auto *row = new QHBoxLayout;
+        auto *lbl = new QLabel(QString("<b>%1</b> (%2 agents)").arg(stNom).arg(count));
+        lbl->setFixedWidth(230);
+        auto *bar = new QProgressBar;
+        bar->setRange(0, 100);
+        bar->setValue(pct);
+        bar->setFormat(QString("%1%").arg(pct));
+        bar->setStyleSheet("QProgressBar { border: 1px solid #D5DEE8; border-radius: 6px; text-align: center; height: 18px; }"
+                           "QProgressBar::chunk { background-color: #2E7D32; border-radius: 5px; }");
+        row->addWidget(lbl);
+        row->addWidget(bar);
+        lStatut->addLayout(row);
+    }
+    lStatut->addStretch();
+    tabs->addTab(wStatut, "Statut Administratif");
+
+    // Tab 5 : Effectifs par Gouvernorat
     auto *wGouv = new QWidget;
     auto *lGouv = new QVBoxLayout(wGouv);
     QSqlQuery qg("SELECT gouvernorat, COUNT(*) FROM employe GROUP BY gouvernorat ORDER BY COUNT(*) DESC");
     int shown = 0;
-    while (qg.next() && shown < 8) {
+    while (qg.next() && shown < 10) {
         QString gNom = qg.value(0).toString();
         int count = qg.value(1).toInt();
         auto *row = new QHBoxLayout;
@@ -1582,14 +1889,37 @@ void smartweather::afficherStats()
         shown++;
     }
     lGouv->addStretch();
-    tabs->addTab(wGouv, "Effectifs par Gouvernorat");
+    tabs->addTab(wGouv, "Couverture Régionale");
 
     lay->addWidget(tabs);
 
+    auto *btnRow = new QHBoxLayout;
+    auto *btnPdfStats = new QPushButton("📄 Exporter Rapport Statistique (PDF)");
     auto *btnClose = new QPushButton("Fermer");
-    connect(btnClose, &QPushButton::clicked, dlg, &QDialog::accept);
-    lay->addWidget(btnClose, 0, Qt::AlignRight);
+    btnPdfStats->setObjectName("innovant");
 
+    for (auto *b : {btnPdfStats, btnClose}) b->setCursor(Qt::PointingHandCursor);
+
+    btnRow->addWidget(btnPdfStats);
+    btnRow->addStretch();
+    btnRow->addWidget(btnClose);
+    lay->addLayout(btnRow);
+
+    connect(btnClose, &QPushButton::clicked, dlg, &QDialog::accept);
+    connect(btnPdfStats, &QPushButton::clicked, [this, dlg]() {
+        QString defaultName = QString("rapport_statistiques_rh_inm_%1.pdf").arg(QDate::currentDate().toString("yyyy_MM_dd"));
+        QString path = QFileDialog::getSaveFileName(dlg, "Exporter Rapport Statistique (PDF)", defaultName, "Documents PDF (*.pdf)");
+        if (path.isEmpty()) return;
+        if (Employe::exporterStatsPDF(path, m_user)) {
+            Employe::logAction("Export Rapport Stats", "Exportation du rapport statistique RH en PDF", m_user);
+            QMessageBox::information(dlg, "Rapport Généré", "Le rapport statistique a été exporté en PDF avec succès.");
+            QDesktopServices::openUrl(QUrl::fromLocalFile(path));
+        } else {
+            erreur("Erreur lors de la génération du rapport statistique PDF.");
+        }
+    });
+
+    Employe::logAction("Consultation Stats", "Affichage des indicateurs analytiques RH", m_user);
     dlg->exec();
 }
 
@@ -1728,10 +2058,12 @@ void smartweather::planifierVeille24h()
         QTextDocument doc;
         doc.setHtml(html);
         doc.print(&printer);
+        Employe::logAction("Export Planning PDF", "Exportation du planning de veille 24h en PDF", "Responsable RH");
         QMessageBox::information(dlg, "Export Planning", "Le planning a été exporté en PDF avec succès.");
         QDesktopServices::openUrl(QUrl::fromLocalFile(path));
     });
 
+    Employe::logAction("Planning Veille 24h", "Génération automatique du planning équilibré de veille", m_user);
     dlg->exec();
 }
 
@@ -1836,7 +2168,7 @@ void smartweather::affecterTechnicien()
     lay->addLayout(btnRow);
 
     connect(btnClose, &QPushButton::clicked, dlg, &QDialog::accept);
-    connect(btnAffecter, &QPushButton::clicked, [dlg, table, cmbGouv]() {
+    connect(btnAffecter, &QPushButton::clicked, [this, dlg, table, cmbGouv]() {
         int r = table->currentRow();
         if (r < 0) {
             QMessageBox::warning(dlg, "Sélection", "Veuillez sélectionner un technicien dans la liste.");
@@ -1844,6 +2176,7 @@ void smartweather::affecterTechnicien()
         }
         QString nom = table->item(r, 2)->text();
         QString gouv = cmbGouv->currentText();
+        Employe::logAction("Affectation Tech", QString("Affectation urgente du technicien %1 à %2").arg(nom, gouv), m_user);
         QMessageBox::information(dlg, "Affectation Validée",
             QString("Le technicien <b>%1</b> a été affecté avec succès à l'intervention dans le gouvernorat de <b>%2</b>.").arg(nom, gouv));
         dlg->accept();

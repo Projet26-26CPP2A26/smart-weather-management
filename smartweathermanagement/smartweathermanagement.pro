@@ -10,7 +10,8 @@ SOURCES += \
     statsview.cpp \
     logindialog.cpp \
     connection.cpp \
-    modulealerteswidget.cpp
+    modulealerteswidget.cpp \
+    qrcodegen.cpp
 
 HEADERS += \
     employe.h \
@@ -20,7 +21,8 @@ HEADERS += \
     statsview.h \
     logindialog.h \
     connection.h \
-    modulealerteswidget.h
+    modulealerteswidget.h \
+    qrcodegen.hpp
 
 FORMS += \
     smartweather.ui \

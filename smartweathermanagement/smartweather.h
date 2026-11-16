@@ -39,9 +39,13 @@ private slots:
     void supprimer();
     void archiverEmploye();
     void charger();
+    void changerOrdreTri();
     void exporterCsv();
     void exporterPdf();
+    void exporterAttestation();
+    void genererBadge();
     void afficherStats();
+    void afficherLogs();
     void planifierVeille24h();
     void affecterTechnicien();
     void remplirFormulaire(const QModelIndex &index);
@@ -85,7 +89,11 @@ private:
     QComboBox *m_poste, *m_structure, *m_statut, *m_horaire;
     QDateEdit *m_date;
     QComboBox *m_critere, *m_tri;
+    QPushButton *m_btnOrdreTri;
     QLineEdit *m_recherche;
+    QPushButton *m_btnClearRecherche;
+    QLabel *m_lblNbResultats;
+    QString m_ordreTri = "ASC";
     QTableView *m_table;
     QSqlQueryModel *m_model;
     QString m_idCourant;

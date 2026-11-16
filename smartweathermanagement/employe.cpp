@@ -1,13 +1,17 @@
 #include "employe.h"
+#include "qrcodegen.hpp"
 #include <QSqlError>
 #include <QSqlQuery>
 #include <QDebug>
 #include <QPrinter>
 #include <QPainter>
+#include <QPainterPath>
 #include <QTextDocument>
 #include <QDateTime>
 #include <QPageLayout>
 #include <QFile>
+#include <QBuffer>
+#include <QCryptographicHash>
 
 Employe::Employe() {
     id_employe = "";
@@ -250,6 +254,16 @@ bool Employe::exporterFichePDF(const QString &id, const QString &cheminFichier, 
     QString statut = q.value(8).toString();
     QString horaire = q.value(9).toString();
 
+    // Génération du QR Code de vérification
+    QString qrData = QString("INM-AGENT|ID:%1|NOM:%2|PRENOM:%3|POSTE:%4|STATUT:%5")
+                         .arg(id, nom, prenom, poste, statut);
+    QImage qrImg = genererQrCode(qrData, 140);
+    QByteArray ba;
+    QBuffer buffer(&ba);
+    buffer.open(QIODevice::WriteOnly);
+    qrImg.save(&buffer, "PNG");
+    QString qrBase64 = QString::fromLatin1(ba.toBase64());
+
     QString html;
     html += "<!DOCTYPE html><html><head><meta charset='utf-8'/>";
     html += "<style>";
@@ -273,13 +287,19 @@ bool Employe::exporterFichePDF(const QString &id, const QString &cheminFichier, 
     html += "<div class='subtitle'>DOSSIER DU PERSONNEL &bull; FICHE INDIVIDUELLE DE L'EMPLOY&Eacute;</div>";
     html += "</div>";
 
+    html += "<table width='100%' style='border:none; margin-bottom:15px;'><tr>";
+    html += "<td style='border:none; vertical-align:top;'>";
     html += "<div class='card'>";
     html += "<div class='card-title'>IDENTIT&Eacute; ET COORDONN&Eacute;ES</div>";
-    html += QString("<div class='row'><span class='label'>Identifiant Agent :</span><span class='value'>#%1</span></div>").arg(id);
+    html += QString("<div class='row'><span class='label'>Identifiant Agent :</span><span class='value'><b>#%1</b></span></div>").arg(id);
     html += QString("<div class='row'><span class='label'>Nom et Pr&eacute;nom :</span><span class='value'><b>%1 %2</b></span></div>").arg(nom, prenom);
     html += QString("<div class='row'><span class='label'>Adresse Email :</span><span class='value'>%1</span></div>").arg(email);
     html += QString("<div class='row'><span class='label'>Statut Administratif :</span><span class='badge'>%1</span></div>").arg(statut);
     html += "</div>";
+    html += "</td>";
+    html += "<td style='border:none; width:150px; text-align:center; vertical-align:middle;'>";
+    html += QString("<img src='data:image/png;base64,%1' width='120' height='120'/><br><span style='font-size:9px; color:#78909C;'>Contrôle Sécurisé QR</span>").arg(qrBase64);
+    html += "</td></tr></table>";
 
     html += "<div class='card'>";
     html += "<div class='card-title'>AFFECTATION PROFESSIONNELLE</div>";
@@ -312,6 +332,437 @@ bool Employe::exporterFichePDF(const QString &id, const QString &cheminFichier, 
     return true;
 }
 
+bool Employe::exporterAttestationPDF(const QString &id, const QString &cheminFichier, const QString &editeur) {
+    QPrinter printer(QPrinter::HighResolution);
+    printer.setOutputFormat(QPrinter::PdfFormat);
+    printer.setOutputFileName(cheminFichier);
+    printer.setPageOrientation(QPageLayout::Portrait);
+
+    QSqlQuery q;
+    q.prepare("SELECT id_employe, nom, prenom, email, poste, structure, gouvernorat, "
+              "date_recrutement, statut, type_horaire FROM employe WHERE id_employe = ?");
+    q.addBindValue(id);
+    if (!q.exec() || !q.next()) return false;
+
+    QString nom = q.value(1).toString();
+    QString prenom = q.value(2).toString();
+    QString poste = q.value(4).toString();
+    QString structure = q.value(5).toString();
+    QString gouv = q.value(6).toString();
+    QString dateRecrut = q.value(7).toString();
+    QString statut = q.value(8).toString();
+    QString horaire = q.value(9).toString();
+
+    // Numéro de référence officiel
+    QString refAttestation = QString("REF-INM-RH-%1-%2").arg(QDate::currentDate().toString("yyyy"), id);
+
+    // QR Code d'authentification numérique
+    QString hashSec = QString::fromLatin1(QCryptographicHash::hash((id + nom + prenom + "INM_SECRET_KEY").toUtf8(), QCryptographicHash::Sha256).toHex()).left(12).toUpper();
+    QString qrData = QString("INM-ATTESTATION|REF:%1|ID:%2|AGENT:%3 %4|POSTE:%5|DATE:%6|SEC:%7")
+                         .arg(refAttestation, id, nom, prenom, poste, QDate::currentDate().toString("yyyy-MM-dd"), hashSec);
+    QImage qrImg = genererQrCode(qrData, 160);
+    QByteArray ba;
+    QBuffer buffer(&ba);
+    buffer.open(QIODevice::WriteOnly);
+    qrImg.save(&buffer, "PNG");
+    QString qrBase64 = QString::fromLatin1(ba.toBase64());
+
+    QString html;
+    html += "<!DOCTYPE html><html><head><meta charset='utf-8'/>";
+    html += "<style>";
+    html += "body { font-family: 'Times New Roman', serif; margin: 40px; color: #1A202C; }";
+    html += ".header { text-align: center; border-bottom: 2px solid #0D47A1; padding-bottom: 14px; margin-bottom: 30px; }";
+    html += ".rep { font-size: 13px; text-transform: uppercase; font-weight: bold; letter-spacing: 2px; }";
+    html += ".min { font-size: 12px; text-transform: uppercase; margin-top: 3px; color: #4A5568; }";
+    html += ".inm { font-size: 18px; font-weight: bold; color: #0D47A1; margin-top: 6px; letter-spacing: 1px; }";
+    html += ".ref-box { font-family: Arial, sans-serif; font-size: 11px; color: #4A5568; margin-top: 15px; margin-bottom: 30px; }";
+    html += ".title { text-align: center; font-size: 26px; font-weight: bold; color: #0D47A1; text-decoration: underline; margin: 30px 0; letter-spacing: 2px; }";
+    html += ".content { font-size: 15px; line-height: 1.9; text-align: justify; margin-bottom: 30px; text-indent: 40px; }";
+    html += ".agent-box { background: #F8FAFC; border: 1.5px solid #CBD5E1; border-radius: 8px; padding: 18px 24px; margin: 20px 0; font-family: Arial, sans-serif; font-size: 13.5px; }";
+    html += ".conclusion { font-size: 15px; line-height: 1.8; text-align: justify; margin-top: 25px; text-indent: 40px; }";
+    html += ".sign-table { width: 100%; margin-top: 50px; font-family: Arial, sans-serif; }";
+    html += "</style></head><body>";
+
+    html += "<div class='header'>";
+    html += "<div class='rep'>R&eacute;publique Tunisienne</div>";
+    html += "<div class='min'>Minist&egrave;re du Transport</div>";
+    html += "<div class='inm'>INSTITUT NATIONAL DE LA M&Eacute;T&Eacute;OROLOGIE (INM)</div>";
+    html += "<div style='font-size:12px; color:#64748B; margin-top:4px;'>Direction des Ressources Humaines &bull; Service Central du Personnel</div>";
+    html += "</div>";
+
+    html += "<div class='ref-box'>";
+    html += QString("<b>R&eacute;f&eacute;rence Officielle :</b> %1 &nbsp;&nbsp;&bull;&nbsp;&nbsp; <b>Date :</b> %2")
+                .arg(refAttestation, QDate::currentDate().toString("dd MMMM yyyy"));
+    html += "</div>";
+
+    html += "<div class='title'>ATTESTATION DE TRAVAIL</div>";
+
+    html += "<div class='content'>";
+    html += "Le Directeur des Ressources Humaines de l'Institut National de la M&eacute;t&eacute;orologie (INM), soussign&eacute;, certifie par la pr&eacute;sente que :";
+    html += "</div>";
+
+    html += "<div class='agent-box'>";
+    html += QString("<p style='margin:4px 0;'><b>Monsieur / Madame :</b> <span style='font-size:15px; color:#0D47A1;'>%1 %2</span></p>").arg(nom.toUpper(), prenom);
+    html += QString("<p style='margin:4px 0;'><b>Identifiant National Agent :</b> <b>#%1</b></p>").arg(id);
+    html += QString("<p style='margin:4px 0;'><b>Fonction / Poste :</b> %1</p>").arg(poste);
+    html += QString("<p style='margin:4px 0;'><b>Structure de Rattachement :</b> %1 (Gouvernorat de %2)</p>").arg(structure, gouv);
+    html += QString("<p style='margin:4px 0;'><b>Date de Prise de Fonction :</b> %1</p>").arg(dateRecrut);
+    html += QString("<p style='margin:4px 0;'><b>Statut Op&eacute;rationnel Actuel :</b> %1 (R&eacute;gime : %2)</p>").arg(statut, horaire);
+    html += "</div>";
+
+    html += "<div class='content'>";
+    html += "Est r&eacute;guli&egrave;rement employ&eacute;(e) au sein de nos services en qualit&eacute; d'agent titulaire permanent. L'int&eacute;ress&eacute;(e) exerce ses fonctions avec professionnalisme et d&eacute;vouement, et se trouve &agrave; ce jour libre de tout engagement p&eacute;cuniaire ou administratif &agrave; l'&eacute;gard de notre &eacute;tablissement.";
+    html += "</div>";
+
+    html += "<div class='conclusion'>";
+    html += "La pr&eacute;sente attestation lui est d&eacute;livr&eacute;e &agrave; sa demande pour <b>servir et valoir ce que de droit</b>.";
+    html += "</div>";
+
+    html += "<table class='sign-table' style='border:none;'><tr>";
+    html += "<td style='border:none; width:40%; text-align:center; vertical-align:middle;'>";
+    html += QString("<img src='data:image/png;base64,%1' width='120' height='120'/><br>")
+                .arg(qrBase64);
+    html += QString("<span style='font-size:9.5px; color:#64748B;'>V&eacute;rification d'authenticit&eacute;<br>Signature &bull; %1</span>").arg(hashSec);
+    html += "</td>";
+    html += "<td style='border:none; width:60%; text-align:right; vertical-align:top; font-size:12px;'>";
+    html += QString("Fait &agrave; Tunis, le %1<br>").arg(QDate::currentDate().toString("dd/MM/yyyy"));
+    html += "<b>Pour le Ministre du Transport</b><br>";
+    html += "<b>Par D&eacute;l&eacute;gation, Le Directeur des Ressources Humaines</b><br>";
+    html += QString("<i>%1</i><br><br><br><br>").arg(editeur);
+    html += "__________________________________________<br>";
+    html += "<span style='font-size:10px; color:#64748B;'>[Cachet Officiel & Signature R&eacute;glementaire]</span>";
+    html += "</td>";
+    html += "</tr></table>";
+
+    html += "</body></html>";
+
+    QTextDocument doc;
+    doc.setHtml(html);
+    doc.print(&printer);
+    return true;
+}
+
+bool Employe::exporterStatsPDF(const QString &cheminFichier, const QString &editeur) {
+    QPrinter printer(QPrinter::HighResolution);
+    printer.setOutputFormat(QPrinter::PdfFormat);
+    printer.setOutputFileName(cheminFichier);
+    printer.setPageOrientation(QPageLayout::Portrait);
+
+    QSqlQuery qTotal("SELECT COUNT(*) FROM Employe");
+    int total = (qTotal.next()) ? qTotal.value(0).toInt() : 0;
+    if (total == 0) total = 1;
+
+    QString html;
+    html += "<!DOCTYPE html><html><head><meta charset='utf-8'/>";
+    html += "<style>";
+    html += "body { font-family: Arial, sans-serif; margin: 25px; color: #1E293B; }";
+    html += ".header { text-align: center; border-bottom: 3px solid #1E88E5; padding-bottom: 10px; margin-bottom: 20px; }";
+    html += ".title { font-size: 22px; font-weight: bold; color: #1E88E5; }";
+    html += ".sub { font-size: 13px; color: #64748B; margin-top: 4px; }";
+    html += ".card { background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 8px; padding: 14px; margin-bottom: 18px; }";
+    html += ".card-h { font-size: 14px; font-weight: bold; color: #0F172A; margin-bottom: 10px; border-bottom: 1px solid #CBD5E1; padding-bottom: 4px; }";
+    html += "table { width: 100%; border-collapse: collapse; font-size: 11.5px; }";
+    html += "th { background: #1E88E5; color: white; padding: 7px; text-align: left; }";
+    html += "td { padding: 6px 7px; border-bottom: 1px solid #E2E8F0; }";
+    html += "</style></head><body>";
+
+    html += "<div class='header'>";
+    html += "<div class='title'>RAPPORT STATISTIQUE & INDICATEURS RH</div>";
+    html += "<div class='sub'>Institut National de la M&eacute;t&eacute;orologie &bull; Direction des Ressources Humaines</div>";
+    html += QString("<div style='font-size:11px; color:#64748B; margin-top:6px;'>G&eacute;n&eacute;r&eacute; le %1 par %2 &bull; Effectif global : <b>%3 agents</b></div>")
+                .arg(QDateTime::currentDateTime().toString("dd/MM/yyyy à hh:mm"), editeur, QString::number(total));
+    html += "</div>";
+
+    // 1. Répartition par Poste
+    html += "<div class='card'>";
+    html += "<div class='card-h'>1. R&eacute;partition du Personnel par Poste M&eacute;tier</div>";
+    html += "<table><tr><th>Poste Op&eacute;rationnel</th><th>Effectif</th><th>Pourcentage</th></tr>";
+    QSqlQuery qp("SELECT poste, COUNT(*) FROM Employe GROUP BY poste ORDER BY COUNT(*) DESC");
+    while (qp.next()) {
+        int c = qp.value(1).toInt();
+        int pct = qRound((c * 100.0) / total);
+        html += QString("<tr><td><b>%1</b></td><td>%2</td><td>%3%</td></tr>")
+                    .arg(qp.value(0).toString()).arg(c).arg(pct);
+    }
+    html += "</table></div>";
+
+    // 2. Répartition par Structure
+    html += "<div class='card'>";
+    html += "<div class='card-h'>2. R&eacute;partition par Structure d'Affectation</div>";
+    html += "<table><tr><th>Structure</th><th>Effectif</th><th>Part</th></tr>";
+    QSqlQuery qs("SELECT structure, COUNT(*) FROM Employe GROUP BY structure");
+    while (qs.next()) {
+        int c = qs.value(1).toInt();
+        int pct = qRound((c * 100.0) / total);
+        html += QString("<tr><td><b>%1</b></td><td>%2</td><td>%3%</td></tr>")
+                    .arg(qs.value(0).toString()).arg(c).arg(pct);
+    }
+    html += "</table></div>";
+
+    // 3. Répartition par Statut
+    html += "<div class='card'>";
+    html += "<div class='card-h'>3. Statuts Administratifs et Disponibilit&eacute;</div>";
+    html += "<table><tr><th>Statut</th><th>Effectif</th><th>Taux</th></tr>";
+    QSqlQuery qst("SELECT statut, COUNT(*) FROM Employe GROUP BY statut ORDER BY COUNT(*) DESC");
+    while (qst.next()) {
+        int c = qst.value(1).toInt();
+        int pct = qRound((c * 100.0) / total);
+        html += QString("<tr><td><b>%1</b></td><td>%2</td><td>%3%</td></tr>")
+                    .arg(qst.value(0).toString()).arg(c).arg(pct);
+    }
+    html += "</table></div>";
+
+    html += "</body></html>";
+
+    QTextDocument doc;
+    doc.setHtml(html);
+    doc.print(&printer);
+    return true;
+}
+
+QImage Employe::genererQrCode(const QString &texte, int taille) {
+    using namespace qrcodegen;
+    try {
+        QrCode qr = QrCode::encodeText(texte.toUtf8().constData(), QrCode::Ecc::MEDIUM);
+        const int s = qr.getSize();
+        const int border = 2;
+        const int totalModules = s + 2 * border;
+        const int scale = qMax(1, taille / totalModules);
+        const int imgSize = totalModules * scale;
+
+        QImage img(imgSize, imgSize, QImage::Format_RGB32);
+        img.fill(Qt::white);
+        QPainter p(&img);
+        p.setPen(Qt::NoPen);
+        p.setBrush(QColor("#0F172A"));
+
+        for (int y = 0; y < s; ++y) {
+            for (int x = 0; x < s; ++x) {
+                if (qr.getModule(x, y)) {
+                    p.fillRect((x + border) * scale, (y + border) * scale, scale, scale, QColor("#0F172A"));
+                }
+            }
+        }
+        return img;
+    } catch (...) {
+        QImage fallback(taille, taille, QImage::Format_RGB32);
+        fallback.fill(Qt::white);
+        return fallback;
+    }
+}
+
+QImage Employe::genererBadgeImage(const QString &id) {
+    QSqlQuery q;
+    q.prepare("SELECT id_employe, nom, prenom, email, poste, structure, gouvernorat, "
+              "date_recrutement, statut, type_horaire FROM employe WHERE id_employe = ?");
+    q.addBindValue(id);
+    if (!q.exec() || !q.next()) {
+        QImage empty(400, 600, QImage::Format_RGB32);
+        empty.fill(Qt::white);
+        return empty;
+    }
+
+    QString nom = q.value(1).toString();
+    QString prenom = q.value(2).toString();
+    QString email = q.value(3).toString();
+    QString poste = q.value(4).toString();
+    QString structure = q.value(5).toString();
+    QString gouv = q.value(6).toString();
+    QString dateRecrut = q.value(7).toString();
+    QString statut = q.value(8).toString();
+    QString horaire = q.value(9).toString();
+
+    // Dimensions format Badge / Carte RFID (500 x 780 px)
+    const int W = 500;
+    const int H = 780;
+    QImage badge(W, H, QImage::Format_ARGB32);
+    badge.fill(Qt::transparent);
+
+    QPainter p(&badge);
+    p.setRenderHint(QPainter::Antialiasing);
+    p.setRenderHint(QPainter::SmoothPixmapTransform);
+
+    // Fond de carte avec coins arrondis et bordure douce
+    QRectF cardRect(10, 10, W - 20, H - 20);
+    p.setPen(QPen(QColor("#CBD5E1"), 2));
+    p.setBrush(Qt::white);
+    p.drawRoundedRect(cardRect, 18, 18);
+
+    // Bannière haute dégradé bleu INM
+    QRectF headerRect(10, 10, W - 20, 130);
+    QPainterPath headerPath;
+    headerPath.addRoundedRect(cardRect, 18, 18);
+    p.save();
+    p.setClipPath(headerPath);
+    QLinearGradient grad(0, 0, W, 130);
+    grad.setColorAt(0, QColor("#0D47A1"));
+    grad.setColorAt(1, QColor("#1E88E5"));
+    p.fillRect(headerRect, grad);
+
+    // Liseré rouge (Drapeau Tunisien)
+    p.fillRect(QRectF(10, 136, W - 20, 5), QColor("#E53935"));
+    p.restore();
+
+    // Textes en-tête officiel
+    p.setPen(Qt::white);
+    QFont fHead("Arial", 8, QFont::Bold);
+    fHead.setLetterSpacing(QFont::AbsoluteSpacing, 1.5);
+    p.setFont(fHead);
+    p.drawText(QRectF(20, 20, W - 40, 20), Qt::AlignCenter, "RÉPUBLIQUE TUNISIENNE");
+
+    QFont fSub("Arial", 7, QFont::Normal);
+    p.setFont(fSub);
+    p.setPen(QColor("#BBDEFB"));
+    p.drawText(QRectF(20, 38, W - 40, 16), Qt::AlignCenter, "MINISTÈRE DU TRANSPORT");
+
+    QFont fTitle("Arial", 12, QFont::Bold);
+    p.setFont(fTitle);
+    p.setPen(Qt::white);
+    p.drawText(QRectF(20, 56, W - 40, 26), Qt::AlignCenter, "INSTITUT NATIONAL DE LA MÉTÉOROLOGIE");
+
+    QFont fBadge("Arial", 9, QFont::Bold);
+    p.setFont(fBadge);
+    p.setPen(QColor("#E0F2FE"));
+    p.drawText(QRectF(20, 88, W - 40, 20), Qt::AlignCenter, "CARTE D'ACCÈS PROFESSIONNELLE");
+
+    // Avatar / Photo cercle
+    QRectF avatarRect(W / 2.0 - 50, 165, 100, 100);
+    p.setPen(QPen(QColor("#1E88E5"), 4));
+    p.setBrush(QColor("#F0F9FF"));
+    p.drawEllipse(avatarRect);
+
+    // Initiales au centre de l'avatar
+    QString initials = (nom.left(1) + prenom.left(1)).toUpper();
+    QFont fInit("Arial", 28, QFont::Bold);
+    p.setFont(fInit);
+    p.setPen(QColor("#0D47A1"));
+    p.drawText(avatarRect, Qt::AlignCenter, initials);
+
+    // Identité Agent
+    QFont fNom("Arial", 16, QFont::Bold);
+    p.setFont(fNom);
+    p.setPen(QColor("#0F172A"));
+    p.drawText(QRectF(20, 275, W - 40, 28), Qt::AlignCenter, QString("%1 %2").arg(nom, prenom));
+
+    // Badge ID
+    QFont fId("Arial", 10, QFont::Bold);
+    p.setFont(fId);
+    p.setPen(QColor("#2563EB"));
+    p.drawText(QRectF(20, 305, W - 40, 20), Qt::AlignCenter, QString("MATRICULE AGENT : #%1").arg(id));
+
+    // Badge Poste (capsule colorée)
+    QRectF posteRect(50, 332, W - 100, 28);
+    p.setPen(Qt::NoPen);
+    p.setBrush(QColor("#E0F2FE"));
+    p.drawRoundedRect(posteRect, 6, 6);
+    QFont fPoste("Arial", 9, QFont::Bold);
+    p.setFont(fPoste);
+    p.setPen(QColor("#0369A1"));
+    p.drawText(posteRect, Qt::AlignCenter, poste);
+
+    // Informations affectation & structure
+    QFont fInfo("Arial", 9, QFont::Normal);
+    p.setFont(fInfo);
+    p.setPen(QColor("#475569"));
+    int yInfo = 372;
+    p.drawText(QRectF(40, yInfo, W - 80, 18), Qt::AlignCenter, QString("Structure : <b>%1</b>  •  Gouvernorat : <b>%2</b>").arg(structure, gouv));
+    yInfo += 20;
+    p.drawText(QRectF(40, yInfo, W - 80, 18), Qt::AlignCenter, QString("Régime : %1  •  Statut : %2").arg(horaire, statut));
+
+    // Génération et incrustation du QR Code
+    QString hashSec = QString::fromLatin1(QCryptographicHash::hash((id + nom + prenom + "INM_KEY").toUtf8(), QCryptographicHash::Sha256).toHex()).left(10).toUpper();
+    QString qrData = QString("INM-BADGE|ID:%1|NOM:%2|PRE:%3|POSTE:%4|GOUV:%5|SEC:%6")
+                         .arg(id, nom, prenom, poste, gouv, hashSec);
+    QImage qrImg = genererQrCode(qrData, 170);
+
+    QRectF qrRect(W / 2.0 - 85, 430, 170, 170);
+    p.setPen(QPen(QColor("#E2E8F0"), 1));
+    p.setBrush(Qt::white);
+    p.drawRoundedRect(QRectF(qrRect.left() - 6, qrRect.top() - 6, 182, 182), 8, 8);
+    p.drawImage(qrRect, qrImg);
+
+    // Puce RFID / Sécurité virtuelle
+    QFont fSec("Arial", 8, QFont::Bold);
+    p.setFont(fSec);
+    p.setPen(QColor("#64748B"));
+    p.drawText(QRectF(20, 625, W - 40, 18), Qt::AlignCenter, QString("AUTHENTIFICATION NUMÉRIQUE • CLÉ : %1").arg(hashSec));
+
+    // Pied de badge
+    p.setPen(QPen(QColor("#E2E8F0"), 1));
+    p.drawLine(40, 655, W - 40, 655);
+
+    QFont fFoot("Arial", 7.5, QFont::Normal);
+    p.setFont(fFoot);
+    p.setPen(QColor("#94A3B8"));
+    p.drawText(QRectF(20, 665, W - 40, 16), Qt::AlignCenter, "Carte strictement personnelle • Propriété de l'INM");
+    p.drawText(QRectF(20, 683, W - 40, 16), Qt::AlignCenter, "En cas de perte, veuillez contacter le service RH (inm.tn)");
+
+    return badge;
+}
+
+bool Employe::exporterBadgePDF(const QString &id, const QString &cheminFichier) {
+    QImage badge = genererBadgeImage(id);
+    if (badge.isNull()) return false;
+
+    QPrinter printer(QPrinter::HighResolution);
+    printer.setOutputFormat(QPrinter::PdfFormat);
+    printer.setOutputFileName(cheminFichier);
+    printer.setPageOrientation(QPageLayout::Portrait);
+
+    QPainter painter(&printer);
+    QRect pageRect = printer.pageLayout().paintRectPixels(printer.resolution());
+    
+    // Centrer le badge sur la page PDF
+    int bw = pageRect.width() * 0.65;
+    int bh = (bw * badge.height()) / badge.width();
+    int bx = (pageRect.width() - bw) / 2;
+    int by = (pageRect.height() - bh) / 2;
+
+    painter.drawImage(QRect(bx, by, bw, bh), badge);
+    painter.end();
+    return true;
+}
+
+bool Employe::logAction(const QString &action, const QString &details, const QString &utilisateur) {
+    // S'assurer de la présence de la table historique_rh
+    QSqlQuery check("SELECT 1 FROM historique_rh WHERE 1 = 0");
+    if (!check.isActive()) {
+        QSqlQuery create("CREATE TABLE historique_rh ("
+                         "id_log NUMBER GENERATED ALWAYS AS IDENTITY, "
+                         "date_action VARCHAR2(30), "
+                         "utilisateur VARCHAR2(50), "
+                         "action VARCHAR2(100), "
+                         "details VARCHAR2(255))");
+        if (!create.isActive()) {
+            QSqlQuery createSqlite("CREATE TABLE IF NOT EXISTS historique_rh ("
+                                   "id_log INTEGER PRIMARY KEY AUTOINCREMENT, "
+                                   "date_action TEXT, "
+                                   "utilisateur TEXT, "
+                                   "action TEXT, "
+                                   "details TEXT)");
+            createSqlite.exec();
+        }
+    }
+
+    QSqlQuery q;
+    q.prepare("INSERT INTO historique_rh (date_action, utilisateur, action, details) VALUES (:d, :u, :a, :det)");
+    q.bindValue(":d", QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss"));
+    q.bindValue(":u", utilisateur.isEmpty() ? "admin" : utilisateur);
+    q.bindValue(":a", action);
+    q.bindValue(":det", details);
+    return q.exec();
+}
+
+QSqlQueryModel* Employe::afficherLogs() {
+    QSqlQueryModel *model = new QSqlQueryModel();
+    model->setQuery("SELECT date_action, utilisateur, action, details FROM historique_rh ORDER BY date_action DESC");
+    model->setHeaderData(0, Qt::Horizontal, QObject::tr("Date & Heure"));
+    model->setHeaderData(1, Qt::Horizontal, QObject::tr("Utilisateur"));
+    model->setHeaderData(2, Qt::Horizontal, QObject::tr("Action Métier"));
+    model->setHeaderData(3, Qt::Horizontal, QObject::tr("Détails de l'Opération"));
+    return model;
+}
+
 bool Employe::existe(const QString &id) {
     QSqlQuery query;
     query.prepare("SELECT COUNT(*) FROM Employe WHERE ID_Employe = :id");
@@ -326,12 +777,14 @@ QSqlQueryModel* Employe::trier(const QString &critere, const QString &ordre) {
     QSqlQueryModel* model = new QSqlQueryModel();
     QString col = "ID_Employe";
     if (critere == "Nom") col = "Nom";
+    else if (critere == "Prénom") col = "Prenom";
     else if (critere == "Poste") col = "Poste";
     else if (critere == "Date de recrutement") col = "Date_Recrutement";
     else if (critere == "Structure") col = "Structure";
     else if (critere == "Gouvernorat") col = "Gouvernorat";
     else if (critere == "Statut") col = "Statut";
     else if (critere == "ID") col = "ID_Employe";
+    else if (critere == "Horaire") col = "Type_Horaire";
 
     QString direction = (ordre.toUpper() == "DESC") ? "DESC" : "ASC";
     QString sql = QString("SELECT ID_Employe, Nom, Prenom, Email, Poste, Structure, Gouvernorat, Date_Recrutement, Statut, Type_Horaire "
@@ -351,32 +804,39 @@ QSqlQueryModel* Employe::trier(const QString &critere, const QString &ordre) {
     return model;
 }
 
-QSqlQueryModel* Employe::rechercher(const QString &texte, const QString &critere, const QString &tri) {
+QSqlQueryModel* Employe::rechercher(const QString &texte, const QString &critere, const QString &tri, const QString &ordre) {
     QSqlQueryModel* model = new QSqlQueryModel();
     QString colTri = "Nom";
     if (tri == "Poste") colTri = "Poste";
+    else if (tri == "Prénom") colTri = "Prenom";
     else if (tri == "Date de recrutement") colTri = "Date_Recrutement";
     else if (tri == "Structure") colTri = "Structure";
     else if (tri == "Gouvernorat") colTri = "Gouvernorat";
     else if (tri == "ID") colTri = "ID_Employe";
+    else if (tri == "Statut") colTri = "Statut";
+
+    QString dir = (ordre.toUpper() == "DESC") ? "DESC" : "ASC";
 
     QSqlQuery query;
     if (critere == "Tous" || critere.isEmpty()) {
         query.prepare(QString("SELECT ID_Employe, Nom, Prenom, Email, Poste, Structure, Gouvernorat, Date_Recrutement, Statut, Type_Horaire "
                               "FROM Employe WHERE (UPPER(Nom) LIKE UPPER(:val) OR UPPER(Prenom) LIKE UPPER(:val) "
                               "OR UPPER(Email) LIKE UPPER(:val) OR UPPER(Poste) LIKE UPPER(:val) "
-                              "OR UPPER(Gouvernorat) LIKE UPPER(:val) OR UPPER(ID_Employe) LIKE UPPER(:val)) "
-                              "ORDER BY %1 ASC").arg(colTri));
+                              "OR UPPER(Gouvernorat) LIKE UPPER(:val) OR UPPER(Structure) LIKE UPPER(:val) "
+                              "OR UPPER(Statut) LIKE UPPER(:val) OR UPPER(ID_Employe) LIKE UPPER(:val)) "
+                              "ORDER BY %1 %2").arg(colTri, dir));
     } else {
         QString colRecherche = "Nom";
-        if (critere == "Poste") colRecherche = "Poste";
+        if (critere == "Prénom") colRecherche = "Prenom";
+        else if (critere == "Poste") colRecherche = "Poste";
         else if (critere == "Structure") colRecherche = "Structure";
         else if (critere == "Gouvernorat") colRecherche = "Gouvernorat";
         else if (critere == "ID") colRecherche = "ID_Employe";
         else if (critere == "Email") colRecherche = "Email";
+        else if (critere == "Statut") colRecherche = "Statut";
 
         query.prepare(QString("SELECT ID_Employe, Nom, Prenom, Email, Poste, Structure, Gouvernorat, Date_Recrutement, Statut, Type_Horaire "
-                              "FROM Employe WHERE UPPER(%1) LIKE UPPER(:val) ORDER BY %2 ASC").arg(colRecherche, colTri));
+                              "FROM Employe WHERE UPPER(%1) LIKE UPPER(:val) ORDER BY %2 %3").arg(colRecherche, colTri, dir));
     }
     query.bindValue(":val", "%" + texte + "%");
     query.exec();
