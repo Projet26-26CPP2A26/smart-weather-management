@@ -16,7 +16,9 @@ SOURCES += \
     relevewindow.cpp \
     maintenancewindow.cpp \
     interventiondialog.cpp \
-    localdb.cpp
+    localdb.cpp \
+    equipement.cpp \
+    equipementwindow.cpp
 
 HEADERS += \
     employe.h \
@@ -36,7 +38,9 @@ HEADERS += \
     interventiondialog.h \
     style.h \
     dbcompat.h \
-    localdb.h
+    localdb.h \
+    equipement.h \
+    equipementwindow.h
 
 FORMS += \
     smartweather.ui \
@@ -44,7 +48,8 @@ FORMS += \
     modulealerteswidget.ui \
     stationwindow.ui \
     relevewindow.ui \
-    releve_dialog.ui
+    releve_dialog.ui \
+    equipementwindow.ui
 
 RESOURCES += \
     resources.qrc

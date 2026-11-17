@@ -4,6 +4,7 @@
 #include "stationwindow.h"
 #include "relevewindow.h"
 #include "maintenancewindow.h"
+#include "equipementwindow.h"
 #include "localdb.h"
 #include "dbcompat.h"
 #include <QCalendarWidget>
@@ -532,6 +533,9 @@ QWidget *smartweather::buildShell()
     m_maintenance = new MaintenanceWindow;
     m_maintenance->setWindowFlags(Qt::Widget);
     m_pages->addWidget(m_maintenance);
+    m_equipement = new EquipementWindow;
+    m_equipement->setWindowFlags(Qt::Widget);
+    m_pages->addWidget(m_equipement);
     cl->addWidget(m_pages, 1);
 
     h->addWidget(contenu, 1);
@@ -557,7 +561,7 @@ QWidget *smartweather::buildSidebar()
 
     const QStringList noms = {"Tableau de bord", "Employés", "Stations",
                               "Relevés && Attestations", "Alertes && Prédictions",
-                              "Maintenance"};
+                              "Maintenance", "Équipements"};
     for (int i = 0; i < noms.size(); ++i) {
         auto *b = new QPushButton(noms[i]);
         b->setObjectName("nav");
@@ -638,7 +642,7 @@ void smartweather::allerPage(int index)
 {
     static const QStringList titres = {"Tableau de bord", "Gestion des employés", "Gestion des stations",
                                        "Relevés météo & attestations", "Alertes & prédictions",
-                                       "Maintenance & interventions"};
+                                       "Maintenance & interventions", "Gestion des équipements"};
     if (index < 0 || index >= m_pages->count()) return;
     m_pages->setCurrentIndex(index);
     m_titrePage->setText(titres.value(index));
@@ -649,6 +653,7 @@ void smartweather::allerPage(int index)
     if (index == 3 && m_releveWindow)  m_releveWindow->refreshData();
     if (index == 4 && m_moduleAlertes) m_moduleAlertes->rafraichirDonnees();
     if (index == 5 && m_maintenance)   m_maintenance->refreshData();
+    if (index == 6 && m_equipement)    m_equipement->refreshData();
 }
 
 void smartweather::rechercheGlobale()

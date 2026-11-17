@@ -19,6 +19,7 @@ class ModuleAlertesWidget;
 class StationWindow;
 class ReleveWindow;
 class MaintenanceWindow;
+class EquipementWindow;
 
 class smartweather : public QWidget
 {
@@ -95,6 +96,7 @@ private:
     StationWindow       *m_stationWindow  = nullptr;
     ReleveWindow        *m_releveWindow   = nullptr;
     MaintenanceWindow   *m_maintenance    = nullptr;
+    EquipementWindow    *m_equipement     = nullptr;
 };
 
 #endif
