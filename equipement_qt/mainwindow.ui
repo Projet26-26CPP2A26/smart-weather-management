@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1100</width>
+    <height>600</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Smart Weather : Gestion des équipements</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QHBoxLayout" name="layoutPrincipal" stretch="1,2">
+    <item>
+     <layout class="QVBoxLayout" name="layoutGauche">
+      <item>
+       <widget class="QGroupBox" name="gbFormulaire">
+        <property name="title">
+         <string>Équipement</string>
+        </property>
+        <layout class="QFormLayout" name="formLayout">
+         <item row="0" column="0">
+          <widget class="QLabel" name="lblId">
+           <property name="text">
+            <string>ID</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="1">
+          <widget class="QLineEdit" name="leId">
+           <property name="readOnly">
+            <bool>true</bool>
+           </property>
+           <property name="placeholderText">
+            <string>(automatique)</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="0">
+          <widget class="QLabel" name="lblNom">
+           <property name="text">
+            <string>Nom *</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1">
+          <widget class="QLineEdit" name="leNom"/>
+         </item>
+         <item row="2" column="0">
+          <widget class="QLabel" name="lblType">
+           <property name="text">
+            <string>Type *</string>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="0">
+          <widget class="QLabel" name="lblMarque">
+           <property name="text">
+            <string>Marque</string>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="1">
+          <widget class="QLineEdit" name="leMarque"/>
+         </item>
+         <item row="4" column="0">
+          <widget class="QLabel" name="lblSerie">
+           <property name="text">
+            <string>N° série *</string>
+           </property>
+          </widget>
+         </item>
+         <item row="4" column="1">
+          <widget class="QLineEdit" name="leSerie"/>
+         </item>
+         <item row="5" column="0">
+          <widget class="QLabel" name="lblDate">
+           <property name="text">
+            <string>Installation</string>
+           </property>
+          </widget>
+         </item>
+         <item row="5" column="1">
+          <widget class="QDateEdit" name="deInstallation">
+           <property name="displayFormat">
+            <string>dd/MM/yyyy</string>
+           </property>
+           <property name="calendarPopup">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item row="6" column="0">
+          <widget class="QLabel" name="lblStatut">
+           <property name="text">
+            <string>Statut</string>
+           </property>
+          </widget>
+         </item>
+         <item row="6" column="1">
+          <widget class="QComboBox" name="cbStatut"/>
+         </item>
+         <item row="7" column="0">
+          <widget class="QLabel" name="lblStation">
+           <property name="text">
+            <string>Station *</string>
+           </property>
+          </widget>
+         </item>
+         <item row="7" column="1">
+          <widget class="QComboBox" name="cbStation"/>
+         </item>
+         <item row="2" column="1">
+          <widget class="QComboBox" name="cbType"/>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item>
+       <widget class="QGroupBox" name="gbActions">
+        <property name="title">
+         <string>Actions</string>
+        </property>
+        <layout class="QGridLayout" name="gridActions">
+         <item row="0" column="0">
+          <widget class="QPushButton" name="btnAjouter">
+           <property name="text">
+            <string>Ajouter</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="1">
+          <widget class="QPushButton" name="btnModifier">
+           <property name="text">
+            <string>Modifier</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="0">
+          <widget class="QPushButton" name="btnSupprimer">
+           <property name="text">
+            <string>Supprimer</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1">
+          <widget class="QPushButton" name="btnVider">
+           <property name="text">
+            <string>Vider le formulaire</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="0">
+          <widget class="QPushButton" name="btnExportPdf">
+           <property name="text">
+            <string>Exporter PDF</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="1">
+          <widget class="QPushButton" name="btnStats">
+           <property name="text">
+            <string>Statistiques</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item>
+       <spacer name="spacerGauche">
+        <property name="orientation">
+         <enum>Qt::Orientation::Vertical</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>0</width>
+          <height>0</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+     </layout>
+    </item>
+    <item>
+     <layout class="QVBoxLayout" name="layoutDroite">
+      <item>
+       <layout class="QHBoxLayout" name="layoutRecherche">
+        <item>
+         <widget class="QLineEdit" name="leRecherche">
+          <property name="placeholderText">
+           <string>Rechercher (nom, type, marque, n° série, station)...</string>
+          </property>
+          <property name="clearButtonEnabled">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QComboBox" name="cbTri"/>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <widget class="QTableView" name="tblEquipement"/>
+      </item>
+     </layout>
+    </item>
+   </layout>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
