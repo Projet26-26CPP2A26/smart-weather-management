@@ -115,3 +115,81 @@ SELECT structure, COUNT(*) AS effectif FROM EMPLOYE GROUP BY structure;
 
 -- Consultation du journal d'audit RH
 SELECT * FROM HISTORIQUE_RH ORDER BY id_log DESC;
+
+
+-- ============================================================================
+-- SEMAINE 10 : MODÈLE PHYSIQUE POUR LE SCÉNARIO ARDUINO (STATION MÉTÉO)
+-- PERSISTANCE DES RELEVÉS TÉLÉMÉTRIQUES ET HISTORIQUE DES ALERTES
+-- ÉTUDIANTE : SALMA RIDENE
+-- ============================================================================
+
+-- 8. TABLE RELEVE_METEO (RELEVÉS TRANSMIS PAR L'ARDUINO EN TEMPS RÉEL)
+DROP TABLE RELEVE_METEO CASCADE CONSTRAINTS;
+DROP SEQUENCE seq_releve_meteo;
+
+CREATE TABLE RELEVE_METEO (
+    id_releve    NUMBER,
+    date_releve  VARCHAR2(30)  NOT NULL,
+    temperature  NUMBER(6,2)   NOT NULL,
+    humidite     NUMBER(5,2)   NOT NULL,
+    pluie_adc    NUMBER(5)     NOT NULL,
+    gel_detecte  VARCHAR2(3)   DEFAULT 'Non',
+    station_id   VARCHAR2(50)  NOT NULL,
+    CONSTRAINT pk_releve_meteo PRIMARY KEY (id_releve),
+    CONSTRAINT chk_releve_gel CHECK (gel_detecte IN ('Oui', 'Non'))
+);
+
+CREATE SEQUENCE seq_releve_meteo START WITH 1 INCREMENT BY 1 NOCACHE;
+
+CREATE OR REPLACE TRIGGER trg_releve_meteo_id
+BEFORE INSERT ON RELEVE_METEO
+FOR EACH ROW
+BEGIN
+    IF :NEW.id_releve IS NULL THEN
+        SELECT seq_releve_meteo.NEXTVAL INTO :NEW.id_releve FROM DUAL;
+    END IF;
+END;
+/
+
+-- 9. TABLE ALERTE_METEO (ALERTES GÉNÉRÉES SUITE AU DÉPASSEMENT DES SEUILS CRITIQUES)
+DROP TABLE ALERTE_METEO CASCADE CONSTRAINTS;
+DROP SEQUENCE seq_alerte_meteo;
+
+CREATE TABLE ALERTE_METEO (
+    id_alerte    NUMBER,
+    date_alerte  VARCHAR2(30)  NOT NULL,
+    station_id   VARCHAR2(50)  NOT NULL,
+    type_alerte  VARCHAR2(100) NOT NULL,
+    temperature  NUMBER(6,2),
+    humidite     NUMBER(5,2),
+    pluie_adc    NUMBER(5),
+    gel_detecte  VARCHAR2(3)   DEFAULT 'Non',
+    traitee      VARCHAR2(3)   DEFAULT 'Non',
+    CONSTRAINT pk_alerte_meteo PRIMARY KEY (id_alerte),
+    CONSTRAINT chk_al_gel CHECK (gel_detecte IN ('Oui', 'Non')),
+    CONSTRAINT chk_al_traitee CHECK (traitee IN ('Oui', 'Non'))
+);
+
+CREATE SEQUENCE seq_alerte_meteo START WITH 1 INCREMENT BY 1 NOCACHE;
+
+CREATE OR REPLACE TRIGGER trg_alerte_meteo_id
+BEFORE INSERT ON ALERTE_METEO
+FOR EACH ROW
+BEGIN
+    IF :NEW.id_alerte IS NULL THEN
+        SELECT seq_alerte_meteo.NEXTVAL INTO :NEW.id_alerte FROM DUAL;
+    END IF;
+END;
+/
+
+-- 10. JEU DE DONNÉES DE TEST POUR LE SCÉNARIO ARDUINO
+INSERT INTO RELEVE_METEO (date_releve, temperature, humidite, pluie_adc, gel_detecte, station_id)
+VALUES (TO_CHAR(SYSDATE, 'YYYY-MM-DD HH24:MI:SS'), 26.50, 60.20, 120, 'Non', 'Arduino-UNO-INM-01');
+
+INSERT INTO RELEVE_METEO (date_releve, temperature, humidite, pluie_adc, gel_detecte, station_id)
+VALUES (TO_CHAR(SYSDATE, 'YYYY-MM-DD HH24:MI:SS'), 37.80, 18.40, 45, 'Non', 'Arduino-UNO-INM-01');
+
+INSERT INTO ALERTE_METEO (date_alerte, station_id, type_alerte, temperature, humidite, pluie_adc, gel_detecte, traitee)
+VALUES (TO_CHAR(SYSDATE, 'YYYY-MM-DD HH24:MI:SS'), 'Arduino-UNO-INM-01', 'Canicule & Sécheresse', 37.80, 18.40, 45, 'Non', 'Non');
+
+COMMIT;

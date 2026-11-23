@@ -1,6 +1,7 @@
 #include "smartweather.h"
 #include "employe.h"
 #include "modulealerteswidget.h"
+#include "modulearduinowidget.h"
 #include <QCalendarWidget>
 #include <QComboBox>
 #include <QCryptographicHash>
@@ -647,6 +648,8 @@ QWidget *smartweather::buildShell()
     m_pages->addWidget(buildPlaceholder("Relevés météo & attestations"));
     m_moduleAlertes = new ModuleAlertesWidget;
     m_pages->addWidget(m_moduleAlertes);
+    m_moduleArduino = new ModuleArduinoWidget;
+    m_pages->addWidget(m_moduleArduino);
     cl->addWidget(m_pages, 1);
 
     h->addWidget(contenu, 1);
@@ -671,7 +674,8 @@ QWidget *smartweather::buildSidebar()
     l->addSpacing(26);
 
     const QStringList noms = {"Tableau de bord", "Employés", "Stations",
-                              "Relevés && Attestations", "Alertes && Prédictions"};
+                              "Relevés && Attestations", "Alertes && Prédictions",
+                              "Station Arduino"};
     for (int i = 0; i < noms.size(); ++i) {
         auto *b = new QPushButton(noms[i]);
         b->setObjectName("nav");
@@ -751,7 +755,8 @@ QWidget *smartweather::buildPlaceholder(const QString &nom)
 void smartweather::allerPage(int index)
 {
     static const QStringList titres = {"Tableau de bord", "Gestion des employés", "Gestion des stations",
-                                       "Relevés météo & attestations", "Alertes & prédictions"};
+                                       "Relevés météo & attestations", "Alertes & prédictions",
+                                       "Station Météo Arduino & Télémétrie"};
     if (index < 0 || index >= m_pages->count()) return;
     m_pages->setCurrentIndex(index);
     m_titrePage->setText(titres.value(index));

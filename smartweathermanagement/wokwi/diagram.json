@@ -1,0 +1,102 @@
+{
+  "version": 1,
+  "author": "Salma Ridene",
+  "editor": "wokwi",
+  "parts": [
+    {
+      "type": "wokwi-arduino-uno",
+      "id": "uno",
+      "top": 160,
+      "left": 300,
+      "attrs": {}
+    },
+    {
+      "type": "wokwi-dht22",
+      "id": "dht1",
+      "top": -60,
+      "left": 100,
+      "attrs": { "temperature": "28.5", "humidity": "65" }
+    },
+    {
+      "type": "wokwi-potentiometer",
+      "id": "pot1",
+      "top": -60,
+      "left": 300,
+      "attrs": { "label": "Capteur Pluie", "value": "120" }
+    },
+    {
+      "type": "wokwi-lcd1602",
+      "id": "lcd1",
+      "top": -100,
+      "left": 500,
+      "attrs": { "address": "0x27" }
+    },
+    {
+      "type": "wokwi-led",
+      "id": "ledV",
+      "top": 20,
+      "left": 150,
+      "attrs": { "color": "green", "label": "Normal" }
+    },
+    {
+      "type": "wokwi-led",
+      "id": "ledR",
+      "top": 60,
+      "left": 150,
+      "attrs": { "color": "red", "label": "Alerte" }
+    },
+    {
+      "type": "wokwi-buzzer",
+      "id": "bz1",
+      "top": 100,
+      "left": 150,
+      "attrs": { "volume": "0.5" }
+    },
+    {
+      "type": "wokwi-resistor",
+      "id": "r1",
+      "top": 20,
+      "left": 50,
+      "attrs": { "value": "220" }
+    },
+    {
+      "type": "wokwi-resistor",
+      "id": "r2",
+      "top": 60,
+      "left": 50,
+      "attrs": { "value": "220" }
+    }
+  ],
+  "connections": [
+    ["uno:GND.1",  "dht1:GND",   "black",  []],
+    ["uno:5V",     "dht1:VCC",   "red",    []],
+    ["uno:2",      "dht1:SDA",   "yellow", []],
+
+    ["uno:GND.2",  "pot1:GND",   "black",  []],
+    ["uno:5V",     "pot1:VCC",   "red",    []],
+    ["uno:A0",     "pot1:SIG",   "orange", []],
+
+    ["uno:GND.3",  "lcd1:GND",   "black",  []],
+    ["uno:5V",     "lcd1:VCC",   "red",    []],
+    ["uno:A4",     "lcd1:SDA",   "blue",   []],
+    ["uno:A5",     "lcd1:SCL",   "green",  []],
+
+    ["uno:8",      "r1:1",       "green",  []],
+    ["r1:2",       "ledV:A",     "green",  []],
+    ["ledV:K",     "uno:GND.4",  "black",  []],
+
+    ["uno:9",      "r2:1",       "red",    []],
+    ["r2:2",       "ledR:A",     "red",    []],
+    ["ledR:K",     "uno:GND.5",  "black",  []],
+
+    ["uno:10",     "bz1:1",      "purple", []],
+    ["bz1:2",      "uno:GND.6",  "black",  []]
+  ],
+  "dependencies": {
+    "sketch.ino": {
+      "DHT sensor library": "1.4.4",
+      "LiquidCrystal I2C": "1.1.4"
+    }
+  }
+}
+

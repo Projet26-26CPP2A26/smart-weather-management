@@ -16,6 +16,7 @@ class SwRing;
 class SwLineChart;
 class SwBarChart;
 class ModuleAlertesWidget;
+class ModuleArduinoWidget;
 
 class smartweather : public QWidget
 {
@@ -98,6 +99,7 @@ private:
     QSqlQueryModel *m_model;
     QString m_idCourant;
     ModuleAlertesWidget *m_moduleAlertes = nullptr;
+    ModuleArduinoWidget *m_moduleArduino = nullptr;
 };
 
 #endif

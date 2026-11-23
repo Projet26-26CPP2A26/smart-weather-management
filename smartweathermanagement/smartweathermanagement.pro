@@ -1,4 +1,4 @@
-QT += core gui widgets sql printsupport
+QT += core gui widgets sql printsupport serialport
 CONFIG += c++17
 
 SOURCES += \
@@ -11,7 +11,10 @@ SOURCES += \
     logindialog.cpp \
     connection.cpp \
     modulealerteswidget.cpp \
-    qrcodegen.cpp
+    qrcodegen.cpp \
+    arduino.cpp \
+    stationmeteo.cpp \
+    modulearduinowidget.cpp
 
 HEADERS += \
     employe.h \
@@ -22,7 +25,10 @@ HEADERS += \
     logindialog.h \
     connection.h \
     modulealerteswidget.h \
-    qrcodegen.hpp
+    qrcodegen.hpp \
+    arduino.h \
+    stationmeteo.h \
+    modulearduinowidget.h
 
 FORMS += \
     smartweather.ui \
