@@ -132,9 +132,10 @@ bool Employe::archiver(QString id) {
 }
 
 bool Employe::exporterListePDF(const QString &cheminFichier, const QString &editeur) {
-    QPrinter printer(QPrinter::HighResolution);
+    QPrinter printer(QPrinter::ScreenResolution);
     printer.setOutputFormat(QPrinter::PdfFormat);
     printer.setOutputFileName(cheminFichier);
+    printer.setPageSize(QPageSize(QPageSize::A4));
     printer.setPageOrientation(QPageLayout::Landscape);
 
     QString html;
@@ -227,15 +228,17 @@ bool Employe::exporterListePDF(const QString &cheminFichier, const QString &edit
     html += "</body></html>";
 
     QTextDocument doc;
+    doc.setPageSize(printer.pageLayout().paintRectPixels(printer.resolution()).size());
     doc.setHtml(html);
     doc.print(&printer);
     return true;
 }
 
 bool Employe::exporterFichePDF(const QString &id, const QString &cheminFichier, const QString &editeur) {
-    QPrinter printer(QPrinter::HighResolution);
+    QPrinter printer(QPrinter::ScreenResolution);
     printer.setOutputFormat(QPrinter::PdfFormat);
     printer.setOutputFileName(cheminFichier);
+    printer.setPageSize(QPageSize(QPageSize::A4));
     printer.setPageOrientation(QPageLayout::Portrait);
 
     QSqlQuery q;
@@ -327,15 +330,17 @@ bool Employe::exporterFichePDF(const QString &id, const QString &cheminFichier, 
     html += "</body></html>";
 
     QTextDocument doc;
+    doc.setPageSize(printer.pageLayout().paintRectPixels(printer.resolution()).size());
     doc.setHtml(html);
     doc.print(&printer);
     return true;
 }
 
 bool Employe::exporterAttestationPDF(const QString &id, const QString &cheminFichier, const QString &editeur) {
-    QPrinter printer(QPrinter::HighResolution);
+    QPrinter printer(QPrinter::ScreenResolution);
     printer.setOutputFormat(QPrinter::PdfFormat);
     printer.setOutputFileName(cheminFichier);
+    printer.setPageSize(QPageSize(QPageSize::A4));
     printer.setPageOrientation(QPageLayout::Portrait);
 
     QSqlQuery q;
@@ -370,17 +375,17 @@ bool Employe::exporterAttestationPDF(const QString &id, const QString &cheminFic
     QString html;
     html += "<!DOCTYPE html><html><head><meta charset='utf-8'/>";
     html += "<style>";
-    html += "body { font-family: 'Times New Roman', serif; margin: 40px; color: #1A202C; }";
-    html += ".header { text-align: center; border-bottom: 2px solid #0D47A1; padding-bottom: 14px; margin-bottom: 30px; }";
-    html += ".rep { font-size: 13px; text-transform: uppercase; font-weight: bold; letter-spacing: 2px; }";
-    html += ".min { font-size: 12px; text-transform: uppercase; margin-top: 3px; color: #4A5568; }";
-    html += ".inm { font-size: 18px; font-weight: bold; color: #0D47A1; margin-top: 6px; letter-spacing: 1px; }";
-    html += ".ref-box { font-family: Arial, sans-serif; font-size: 11px; color: #4A5568; margin-top: 15px; margin-bottom: 30px; }";
-    html += ".title { text-align: center; font-size: 26px; font-weight: bold; color: #0D47A1; text-decoration: underline; margin: 30px 0; letter-spacing: 2px; }";
-    html += ".content { font-size: 15px; line-height: 1.9; text-align: justify; margin-bottom: 30px; text-indent: 40px; }";
-    html += ".agent-box { background: #F8FAFC; border: 1.5px solid #CBD5E1; border-radius: 8px; padding: 18px 24px; margin: 20px 0; font-family: Arial, sans-serif; font-size: 13.5px; }";
-    html += ".conclusion { font-size: 15px; line-height: 1.8; text-align: justify; margin-top: 25px; text-indent: 40px; }";
-    html += ".sign-table { width: 100%; margin-top: 50px; font-family: Arial, sans-serif; }";
+    html += "body { font-family: 'Times New Roman', serif; margin: 30px; color: #1A202C; font-size: 12pt; }";
+    html += ".header { text-align: center; border-bottom: 2px solid #0D47A1; padding-bottom: 12px; margin-bottom: 25px; }";
+    html += ".rep { font-size: 12pt; text-transform: uppercase; font-weight: bold; letter-spacing: 2px; }";
+    html += ".min { font-size: 10.5pt; text-transform: uppercase; margin-top: 3px; color: #4A5568; }";
+    html += ".inm { font-size: 15pt; font-weight: bold; color: #0D47A1; margin-top: 6px; letter-spacing: 1px; }";
+    html += ".ref-box { font-family: Arial, sans-serif; font-size: 10pt; color: #4A5568; margin-top: 15px; margin-bottom: 25px; }";
+    html += ".title { text-align: center; font-size: 20pt; font-weight: bold; color: #0D47A1; text-decoration: underline; margin: 25px 0; letter-spacing: 2px; }";
+    html += ".content { font-size: 12.5pt; line-height: 1.8; text-align: justify; margin-bottom: 20px; text-indent: 30px; }";
+    html += ".agent-box { background: #F8FAFC; border: 1.5px solid #CBD5E1; border-radius: 8px; padding: 16px 20px; margin: 18px 0; font-family: Arial, sans-serif; font-size: 11.5pt; line-height: 1.6; }";
+    html += ".conclusion { font-size: 12.5pt; line-height: 1.8; text-align: justify; margin-top: 20px; text-indent: 30px; }";
+    html += ".sign-table { width: 100%; margin-top: 40px; font-family: Arial, sans-serif; }";
     html += "</style></head><body>";
 
     html += "<div class='header'>";
@@ -437,15 +442,17 @@ bool Employe::exporterAttestationPDF(const QString &id, const QString &cheminFic
     html += "</body></html>";
 
     QTextDocument doc;
+    doc.setPageSize(printer.pageLayout().paintRectPixels(printer.resolution()).size());
     doc.setHtml(html);
     doc.print(&printer);
     return true;
 }
 
 bool Employe::exporterStatsPDF(const QString &cheminFichier, const QString &editeur) {
-    QPrinter printer(QPrinter::HighResolution);
+    QPrinter printer(QPrinter::ScreenResolution);
     printer.setOutputFormat(QPrinter::PdfFormat);
     printer.setOutputFileName(cheminFichier);
+    printer.setPageSize(QPageSize(QPageSize::A4));
     printer.setPageOrientation(QPageLayout::Portrait);
 
     QSqlQuery qTotal("SELECT COUNT(*) FROM Employe");
@@ -515,6 +522,7 @@ bool Employe::exporterStatsPDF(const QString &cheminFichier, const QString &edit
     html += "</body></html>";
 
     QTextDocument doc;
+    doc.setPageSize(printer.pageLayout().paintRectPixels(printer.resolution()).size());
     doc.setHtml(html);
     doc.print(&printer);
     return true;

@@ -82,3 +82,4 @@ private:
 };
 
 #endif // MODULEARDUINOWIDGET_H
+

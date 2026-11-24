@@ -193,3 +193,67 @@ INSERT INTO ALERTE_METEO (date_alerte, station_id, type_alerte, temperature, hum
 VALUES (TO_CHAR(SYSDATE, 'YYYY-MM-DD HH24:MI:SS'), 'Arduino-UNO-INM-01', 'Canicule & Sécheresse', 37.80, 18.40, 45, 'Non', 'Non');
 
 COMMIT;
+
+
+-- ============================================================================
+-- SEMAINE 10 : TABLES POUR LES MÉTIERS INNOVANTS AUTOMATISÉS
+-- PLANNING DE VEILLE 24H & DISPATCHING AUTOMATIQUE DES TECHNICIENS
+-- ÉTUDIANTE : SALMA RIDENE
+-- ============================================================================
+
+-- 11. TABLE PLANNING_GARDE (PERSISTANCE DU PLANNING DE VEILLE 24H AUTOMATIQUE)
+DROP TABLE PLANNING_GARDE CASCADE CONSTRAINTS;
+DROP SEQUENCE seq_planning_garde;
+
+CREATE TABLE PLANNING_GARDE (
+    id_garde         NUMBER,
+    date_garde       VARCHAR2(30)  NOT NULL,
+    jour_semaine     VARCHAR2(30)  NOT NULL,
+    quart            VARCHAR2(50)  NOT NULL,
+    agent_nom        VARCHAR2(100) NOT NULL,
+    agent_poste      VARCHAR2(100) NOT NULL,
+    gouvernorat      VARCHAR2(100) NOT NULL,
+    date_generation  VARCHAR2(30)  NOT NULL,
+    CONSTRAINT pk_planning_garde PRIMARY KEY (id_garde)
+);
+
+CREATE SEQUENCE seq_planning_garde START WITH 1 INCREMENT BY 1 NOCACHE;
+
+CREATE OR REPLACE TRIGGER trg_planning_garde_id
+BEFORE INSERT ON PLANNING_GARDE
+FOR EACH ROW
+BEGIN
+    IF :NEW.id_garde IS NULL THEN
+        SELECT seq_planning_garde.NEXTVAL INTO :NEW.id_garde FROM DUAL;
+    END IF;
+END;
+/
+
+-- 12. TABLE AFFECTATION_TECH (AFFECTATION INTELLIGENTE AUTOMATISÉE DES TECHNICIENS)
+DROP TABLE AFFECTATION_TECH CASCADE CONSTRAINTS;
+DROP SEQUENCE seq_affectation_tech;
+
+CREATE TABLE AFFECTATION_TECH (
+    id_aff           NUMBER,
+    date_aff         VARCHAR2(30)  NOT NULL,
+    gouvernorat      VARCHAR2(100) NOT NULL,
+    motif            VARCHAR2(150) NOT NULL,
+    tech_nom         VARCHAR2(100) NOT NULL,
+    score            NUMBER(5,2),
+    statut           VARCHAR2(50)  DEFAULT 'Déployé Automatiquement',
+    CONSTRAINT pk_affectation_tech PRIMARY KEY (id_aff)
+);
+
+CREATE SEQUENCE seq_affectation_tech START WITH 1 INCREMENT BY 1 NOCACHE;
+
+CREATE OR REPLACE TRIGGER trg_affectation_tech_id
+BEFORE INSERT ON AFFECTATION_TECH
+FOR EACH ROW
+BEGIN
+    IF :NEW.id_aff IS NULL THEN
+        SELECT seq_affectation_tech.NEXTVAL INTO :NEW.id_aff FROM DUAL;
+    END IF;
+END;
+/
+
+COMMIT;

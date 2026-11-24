@@ -402,3 +402,4 @@ void ModuleArduinoWidget::rafraichirTableau()
     m_modelReleves = m_station->afficherReleves(30);
     m_tableReleves->setModel(m_modelReleves);
 }
+
