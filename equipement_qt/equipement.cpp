@@ -9,7 +9,22 @@
 #include <QPageLayout>
 #include <QTextDocument>
 
+#include <QSqlDatabase>
+#include <algorithm>
+
 static QString g_erreur;
+
+// Ecrit un document HTML en PDF A4 paysage (partage par les deux exports)
+static bool ecrirePdf(const QString &html, const QString &fichier)
+{
+    QPdfWriter pdf(fichier);
+    pdf.setPageSize(QPageSize(QPageSize::A4));
+    pdf.setPageOrientation(QPageLayout::Landscape);
+    QTextDocument doc;
+    doc.setHtml(html);
+    doc.print(&pdf);
+    return QFile::exists(fichier);
+}
 
 // Meme colonnes, meme ordre, partout. La derniere (ID_STATION) est masquee dans le tableau.
 static const QString SELECT_BASE =
@@ -19,10 +34,10 @@ static const QString SELECT_BASE =
 
 Equipement::Equipement()
     : id_equipement(0), date_installation(QDate::currentDate()),
-      statut("Opérationnel"), id_station(0) {}
+      statut("Opérationnel") {}
 
 Equipement::Equipement(int id, const QString &nom, const QString &type, const QString &marque,
-                       const QString &serie, const QDate &date, const QString &statut, int idStation)
+                       const QString &serie, const QDate &date, const QString &statut, const QString &idStation)
     : id_equipement(id), nom_equipement(nom), type_equipement(type), marque(marque),
       numero_serie(serie), date_installation(date), statut(statut), id_station(idStation) {}
 
@@ -40,7 +55,7 @@ QString Equipement::verifier() const
         return "Le numéro de série doit contenir 3 à 40 lettres, chiffres ou tirets.";
     if (!date_installation.isValid() || date_installation > QDate::currentDate())
         return "La date d'installation est invalide (elle ne peut pas être dans le futur).";
-    if (id_station <= 0)
+    if (id_station.isEmpty())
         return "Choisissez une station.";
     return "";
 }
@@ -158,14 +173,147 @@ bool Equipement::exporterPdf(const QString &fichier, const QString &recherche, c
         html += "</tr>";
     }
     html += "</table>";
+    return ecrirePdf(html, fichier);
+}
 
-    QPdfWriter pdf(fichier);
-    pdf.setPageSize(QPageSize(QPageSize::A4));
-    pdf.setPageOrientation(QPageLayout::Landscape);
-    QTextDocument doc;
-    doc.setHtml(html);
-    doc.print(&pdf);
-    return QFile::exists(fichier);
+// ---------------------------------------------------------------------------
+// Metier innovant 1 : score de sante
+// ---------------------------------------------------------------------------
+int Equipement::calculerScore(const QString &type, const QDate &installation, const QString &statut,
+                              const QString &statutStation, double *ageAns)
+{
+    // Duree de vie moyenne (en annees) par type d'equipement
+    static const QMap<QString, int> vie = {
+        {"Capteur", 6}, {"Anémomètre", 5}, {"Baromètre", 8},
+        {"Pluviomètre", 7}, {"Thermomètre", 6}, {"Autre", 5}
+    };
+    const double age = installation.isValid() ? installation.daysTo(QDate::currentDate()) / 365.25 : 0.0;
+    if (ageAns) *ageAns = age;
+
+    const double usure = qBound(0.0, age / vie.value(type, 5), 1.0);   // 0 = neuf, 1 = fin de vie
+    int score = 100 - qRound(60 * usure);                              // l'age pese jusqu'a 60 points
+    if (statut == "En panne")             score -= 40;
+    else if (statut == "En maintenance")  score -= 20;
+    if (statutStation == "En maintenance") score -= 10;                // la station est deja a l'arret
+    return qBound(0, score, 100);
+}
+
+QString Equipement::niveauSante(int score)
+{
+    return score < 40 ? "Critique" : (score < 70 ? "À surveiller" : "Bon");
+}
+
+QList<SanteEquipement> Equipement::classementSante()
+{
+    QList<SanteEquipement> liste;
+    QSqlQuery q("SELECT e.ID_EQUIPEMENT, e.NOM_EQUIPEMENT, e.TYPE_EQUIPEMENT, s.NOM_STATION, "
+                "e.DATE_INSTALLATION, e.STATUT, s.STATUT "
+                "FROM EQUIPEMENT e JOIN STATION s ON s.ID_STATION = e.ID_STATION");
+    while (q.next()) {
+        SanteEquipement h;
+        h.id = q.value(0).toInt();
+        h.nom = q.value(1).toString();
+        h.type = q.value(2).toString();
+        h.station = q.value(3).toString();
+        h.statut = q.value(5).toString();
+        h.score = calculerScore(h.type, q.value(4).toDate(), h.statut, q.value(6).toString(), &h.ageAns);
+        h.niveau = niveauSante(h.score);
+        liste.append(h);
+    }
+    std::sort(liste.begin(), liste.end(), [](const SanteEquipement &a, const SanteEquipement &b) {
+        return a.score != b.score ? a.score < b.score : a.nom < b.nom;
+    });
+    return liste;
+}
+
+bool Equipement::exporterSantePdf(const QString &fichier)
+{
+    const auto liste = classementSante();
+    QString html = "<h2 align='center'>Équipements à remplacer – score de santé</h2>"
+                   "<p align='center'>Généré le " + QDateTime::currentDateTime().toString("dd/MM/yyyy HH:mm") +
+                   " — " + QString::number(liste.size()) + " équipement(s)</p>"
+                   "<table border='1' cellspacing='0' cellpadding='4' width='100%'><tr bgcolor='#1F3B57'>";
+    for (const char *t : {"Équipement", "Type", "Station", "Statut", "Âge (ans)", "Score", "Niveau"})
+        html += QString("<th><font color='white'>%1</font></th>").arg(QString::fromUtf8(t));
+    html += "</tr>";
+    for (const auto &h : liste) {
+        const QString fond = h.niveau == "Critique" ? "#FDECEA" : (h.niveau == "Bon" ? "#E8F5E9" : "#FFF4E0");
+        html += "<tr bgcolor='" + fond + "'><td>" + h.nom.toHtmlEscaped() + "</td><td>" + h.type.toHtmlEscaped() +
+                "</td><td>" + h.station.toHtmlEscaped() + "</td><td>" + h.statut.toHtmlEscaped() +
+                "</td><td>" + QString::number(h.ageAns, 'f', 1) + "</td><td>" + QString::number(h.score) +
+                "</td><td>" + h.niveau.toHtmlEscaped() + "</td></tr>";
+    }
+    html += "</table>";
+    return ecrirePdf(html, fichier);
+}
+
+// ---------------------------------------------------------------------------
+// Metier innovant 2 : panne -> intervention de maintenance
+// ---------------------------------------------------------------------------
+bool Equipement::creerInterventionPanne(int idEquipement, QString &message)
+{
+    QSqlQuery e;
+    e.prepare("SELECT NOM_EQUIPEMENT, NUMERO_SERIE, STATUT, ID_STATION FROM EQUIPEMENT WHERE ID_EQUIPEMENT = :id");
+    e.bindValue(":id", idEquipement);
+    if (!e.exec() || !e.next()) { message = "Équipement introuvable."; return false; }
+    const QString nom = e.value(0).toString(), serie = e.value(1).toString();
+    const QVariant station = e.value(3);
+    if (e.value(2).toString() != "En panne") {
+        message = "Seul un équipement « En panne » peut déclencher une intervention.\n"
+                  "Passez d'abord son statut à « En panne » (bouton Modifier).";
+        return false;
+    }
+
+    // Le marqueur [EQ#id] dans le rapport relie l'intervention a l'equipement (et evite les doublons)
+    const QString marqueur = QString("[EQ#%1]").arg(idEquipement);
+    QSqlQuery d;
+    d.prepare("SELECT COUNT(*) FROM INTERVENTION WHERE STATUT IN ('Planifiée','En cours') AND ARCHIVE = 0 "
+              "AND DBMS_LOB.INSTR(RAPPORT_INTERVENTION, :m) > 0");
+    d.bindValue(":m", marqueur);
+    if (d.exec() && d.next() && d.value(0).toInt() > 0) {
+        message = "Une intervention est déjà ouverte pour cet équipement.";
+        return false;
+    }
+
+    // Technicien : poste "technicien" en priorite, puis le moins charge (interventions ouvertes)
+    QSqlQuery t("SELECT e.ID_EMPLOYE FROM EMPLOYE e WHERE e.STATUT = 'Actif' ORDER BY "
+                "CASE WHEN UPPER(e.POSTE) LIKE '%TECH%' THEN 0 ELSE 1 END, "
+                "(SELECT COUNT(*) FROM INTERVENTION i WHERE i.ID_EMPLOYE = e.ID_EMPLOYE "
+                "AND i.STATUT IN ('Planifiée','En cours')), e.ID_EMPLOYE");
+    if (!t.next()) { message = "Aucun employé actif pour assurer l'intervention."; return false; }
+    const QVariant technicien = t.value(0);
+
+    // ID : meme methode que le module Maintenance (MAX + 1)
+    // ponytail: pas de verrou, deux creations simultanees pourraient entrer en conflit.
+    QSqlQuery n("SELECT COALESCE(MAX(ID_INTERVENTION), 0) + 1 FROM INTERVENTION");
+    n.next();
+    const int idIntervention = n.value(0).toInt();
+
+    QSqlDatabase db = QSqlDatabase::database();
+    db.transaction();
+    QSqlQuery i;
+    i.prepare("INSERT INTO INTERVENTION (ID_INTERVENTION, ID_STATION, ID_EMPLOYE, TYPE_INTERVENTION, PRIORITE, "
+              "DATE_CREATION, DATE_PLANIFIEE, STATUT, RAPPORT_INTERVENTION) "
+              "VALUES (:id, :st, :emp, 'Corrective', 'Haute', :cree, :plan, 'Planifiée', :rap)");
+    i.bindValue(":id", idIntervention);
+    i.bindValue(":st", station);
+    i.bindValue(":emp", technicien);
+    i.bindValue(":cree", QDateTime::currentDateTime());
+    i.bindValue(":plan", QDateTime::currentDateTime().addDays(1));
+    i.bindValue(":rap", QString("Panne de l'équipement « %1 » (n° série %2). %3").arg(nom, serie, marqueur));
+    QSqlQuery u;
+    u.prepare("UPDATE EQUIPEMENT SET STATUT = 'En maintenance' WHERE ID_EQUIPEMENT = :id");
+    u.bindValue(":id", idEquipement);
+    if (!i.exec() || !u.exec()) {
+        g_erreur = (i.lastError().isValid() ? i.lastError() : u.lastError()).text();
+        db.rollback();
+        message = "Création impossible : " + g_erreur;
+        return false;
+    }
+    db.commit();
+    message = QString("Intervention n°%1 créée (priorité Haute, planifiée demain).\n"
+                      "L'équipement passe « En maintenance ».").arg(idIntervention);
+    return true;
 }
 
 QString Equipement::derniereErreur() { return g_erreur; }

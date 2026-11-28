@@ -14,6 +14,7 @@ class MainWindow : public QMainWindow
 public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
+    void refreshData() { chargerStations(); actualiser(); }   // appelee par la fenetre principale
 
 private slots:
     void on_btnAjouter_clicked();
@@ -22,6 +23,8 @@ private slots:
     void on_btnVider_clicked();
     void on_btnExportPdf_clicked();
     void on_btnStats_clicked();
+    void on_btnSante_clicked();          // metier innovant 1
+    void on_btnIntervention_clicked();   // metier innovant 2
     void on_tblEquipement_clicked(const QModelIndex &index);
     void on_leRecherche_textChanged(const QString &texte);
     void on_cbTri_currentIndexChanged(int index);
