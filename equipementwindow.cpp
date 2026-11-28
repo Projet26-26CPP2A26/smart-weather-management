@@ -8,6 +8,10 @@
 #include <QDialog>
 #include <QComboBox>
 #include <QVBoxLayout>
+#include <QHBoxLayout>
+#include <QLabel>
+#include <QPushButton>
+#include <QTableWidget>
 #include <QPainter>
 #include <QtCharts/QChart>
 #include <QtCharts/QChartView>
@@ -171,6 +175,81 @@ void EquipementWindow::on_btnStats_clicked()
     connect(choix, &QComboBox::currentIndexChanged, &dlg, dessiner);
     dessiner();
     dlg.exec();
+}
+
+// Metier innovant 1 : classement des equipements par score de sante (couleurs = niveau)
+void EquipementWindow::on_btnSante_clicked()
+{
+    const auto liste = Equipement::classementSante();
+    QDialog dlg(this);
+    dlg.setWindowTitle("Équipements à remplacer");
+    dlg.resize(820, 460);
+
+    auto *tbl = new QTableWidget(liste.size(), 7);
+    tbl->setHorizontalHeaderLabels({"Équipement", "Type", "Station", "Statut", "Âge (ans)", "Score", "Niveau"});
+    tbl->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    tbl->setSelectionBehavior(QAbstractItemView::SelectRows);
+    tbl->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+    tbl->verticalHeader()->hide();
+    for (int r = 0; r < liste.size(); ++r) {
+        const auto &h = liste[r];
+        const QColor fond = h.niveau == "Critique" ? QColor("#FDECEA")
+                          : (h.niveau == "Bon" ? QColor("#E8F5E9") : QColor("#FFF4E0"));
+        const QStringList cellules = {h.nom, h.type, h.station, h.statut,
+                                      QString::number(h.ageAns, 'f', 1), QString::number(h.score), h.niveau};
+        for (int c = 0; c < cellules.size(); ++c) {
+            auto *it = new QTableWidgetItem(cellules[c]);
+            it->setBackground(fond);
+            it->setForeground(QColor("#1F2D3D"));      // texte fonce : lisible meme en theme sombre
+            tbl->setItem(r, c, it);
+        }
+    }
+
+    auto *info = new QLabel("Score = 100 − usure (âge / durée de vie du type, jusqu'à 60) − statut "
+                            "(panne 40, maintenance 20) − station en maintenance (10).");
+    info->setWordWrap(true);
+    auto *btnPdf = new QPushButton("Exporter PDF");
+    auto *btnFermer = new QPushButton("Fermer");
+    auto *boutons = new QHBoxLayout;
+    boutons->addStretch();
+    boutons->addWidget(btnPdf);
+    boutons->addWidget(btnFermer);
+    auto *lay = new QVBoxLayout(&dlg);
+    lay->addWidget(info);
+    lay->addWidget(tbl);
+    lay->addLayout(boutons);
+
+    connect(btnFermer, &QPushButton::clicked, &dlg, &QDialog::accept);
+    connect(btnPdf, &QPushButton::clicked, &dlg, [&]() {
+        const QString f = QFileDialog::getSaveFileName(&dlg, "Exporter en PDF", "equipements_a_remplacer.pdf", "PDF (*.pdf)");
+        if (f.isEmpty()) return;
+        if (Equipement::exporterSantePdf(f))
+            QMessageBox::information(&dlg, "Export PDF", "Fichier créé :\n" + f);
+        else
+            QMessageBox::critical(&dlg, "Export PDF", "Impossible de créer le fichier.");
+    });
+    dlg.exec();
+}
+
+// Metier innovant 2 : equipement en panne -> intervention de maintenance
+void EquipementWindow::on_btnIntervention_clicked()
+{
+    if (ui->leId->text().isEmpty()) {
+        QMessageBox::information(this, "Intervention", "Cliquez d'abord sur un équipement « En panne » du tableau.");
+        return;
+    }
+    if (QMessageBox::question(this, "Intervention",
+            "Créer une intervention de maintenance pour « " + ui->leNom->text() + " » ?") != QMessageBox::Yes)
+        return;
+    QString message;
+    const bool ok = Equipement::creerInterventionPanne(ui->leId->text().toInt(), message);
+    if (ok) {
+        QMessageBox::information(this, "Intervention créée", message);
+        viderFormulaire();
+        actualiser();
+    } else {
+        QMessageBox::warning(this, "Intervention", message);
+    }
 }
 
 void EquipementWindow::on_tblEquipement_clicked(const QModelIndex &index)
